@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fillViewport="true">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Movie Trailer Prompt Enhancer"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            android:layout_marginBottom="16dp" />
+
+        <EditText
+            android:id="@+id/base_prompt"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Enter base movie idea or existing prompt (optional)"
+            android:minLines="3"
+            android:gravity="top"
+            android:layout_marginBottom="24dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Select parameters to enhance:"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:layout_marginBottom="16dp" />
+
+        <!-- Genres -->
+        <CheckBox android:id="@+id/genre_action" android:text="Action" android:layout_width="match_parent" android:layout_height="wrap_content"/>
+        <CheckBox android:id="@+id/genre_horror" android:text="Horror" android:layout_width="match_parent" android:layout_height="wrap_content"/>
+        <CheckBox android:id="@+id/genre_comedy" android:text="Comedy" android:layout_width="match_parent" android:layout_height="wrap_content"/>
+        <CheckBox android:id="@+id/genre_romance" android:text="Romance" android:layout_width="match_parent" android:layout_height="wrap_content"/>
+        <CheckBox android:id="@+id/genre_sci_fi" android:text="Sci-Fi" android:layout_width="match_parent" android:layout_height="wrap_content"/>
+        <CheckBox android:id="@+id/genre_animation" android:text="Animation" android:layout_width="match_parent" android:layout_height="wrap_content"/>
+
+        <!-- Visual Styles -->
+        <CheckBox android:id="@+id/style_epic" android:text="Epic / Dramatic (In a world... style)" android:layout_width="match_parent" android:layout_height="wrap_content"/>
+        <CheckBox android:id="@+id/style_big_eyed" android:text="3D Big-Eyed Expressive Characters (cute animated style)" android:layout_width="match_parent" android:layout_height="wrap_content"/>
+        <CheckBox android:id="@+id/style_dark" android:text="Dark and Gritty" android:layout_width="match_parent" android:layout_height="wrap_content"/>
+        <CheckBox android:id="@+id/style_funny" android:text="Humorous / Quirky" android:layout_width="match_parent" android:layout_height="wrap_content"/>
+        <CheckBox android:id="@+id/style_emotional" android:text="Emotional / Heartwarming" android:layout_width="match_parent" android:layout_height="wrap_content"/>
+
+        <!-- Music Intensity -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Trailer Music Intensity:"
+            android:textStyle="bold"
+            android:textSize="18sp"
+            android:layout_marginTop="32dp"
+            android:layout_marginBottom="8dp" />
+
+        <Spinner
+            android:id="@+id/music_intensity_spinner"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <!-- Music Details -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Music Details (select any):"
+            android:textStyle="bold"
+            android:textSize="18sp"
+            android:layout_marginTop="32dp"
+            android:layout_marginBottom="8dp" />
+
+        <CheckBox
+            android:id="@+id/music_braams"
+            android:text="Deep Braams &amp; Sub Booms"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <CheckBox
+            android:id="@+id/music_hybrid_orchestral"
+            android:text="Hybrid Orchestral (strings + synths)"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <CheckBox
+            android:id="@+id/music_risers_hits"
+            android:text="Dramatic Risers &amp; Hits"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <CheckBox
+            android:id="@+id/music_epic_choir"
+            android:text="Epic Choir &amp; Vocals"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <CheckBox
+            android:id="@+id/music_pulsing_synth"
+            android:text="Pulsing Synth Bass"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <CheckBox
+            android:id="@+id/music_horror_stingers"
+            android:text="Horror Stingers &amp; Screeches"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <CheckBox
+            android:id="@+id/music_quirky_orchestra"
+            android:text="Quirky Playful Orchestra"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <CheckBox
+            android:id="@+id/music_heartwarming_piano"
+            android:text="Heartwarming Piano &amp; Strings"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <!-- Generate Button -->
+        <Button
+            android:id="@+id/generate_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Generate Enhanced Trailer Text Prompt"
+            android:layout_marginTop="32dp"
+            android:layout_marginBottom="16dp" />
+
+        <!-- Generated Prompt Label -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Generated Prompt:"
+            android:textStyle="bold"
+            android:textSize="18sp"
+            android:layout_marginBottom="8dp" />
+
+        <!-- Result Area -->
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:maxHeight="500dp"
+            android:background="#000000"
+            android:padding="16dp"
+            android:scrollbars="vertical">
+
+            <TextView
+                android:id="@+id/result"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text=""
+                android:textColor="#FFFFFF"
+                android:textSize="16sp"
+                android:textIsSelectable="true"
+                android:lineSpacingExtra="4dp"
+                android:paddingBottom="80dp" />
+
+        </ScrollView>
+
+        <!-- Extra bottom space -->
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="120dp" />
+
+    </LinearLayout>
+</ScrollView>

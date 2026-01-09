@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="music_intensity_options">
+        <item>low-key subtle</item>
+        <item>medium building</item>
+        <item>high-energy intense</item>
+        <item>maximum epic blockbuster</item>
+    </string-array>
+</resources>
