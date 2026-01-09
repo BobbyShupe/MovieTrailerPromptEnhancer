@@ -6,6 +6,8 @@ import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
+import android.content.ClipData
+import android.content.ClipboardManager
 
 class MainActivity : AppCompatActivity() {
 
@@ -17,7 +19,9 @@ class MainActivity : AppCompatActivity() {
 
     private val genreChecks = mutableListOf<CheckBox>()
     private val styleChecks = mutableListOf<CheckBox>()
+    private val animStyleChecks = mutableListOf<CheckBox>()
     private val musicChecks = mutableListOf<CheckBox>()
+    private val musicMoodChecks = mutableListOf<CheckBox>()
 
     private val gson = Gson()
     private val presets = mutableMapOf<String, PresetData>()
@@ -26,8 +30,10 @@ class MainActivity : AppCompatActivity() {
     data class PresetData(
         val genres: List<Boolean>,
         val styles: List<Boolean>,
+        val animStyles: List<Boolean>,
         val musicIntensityIndex: Int,
-        val musicDetails: List<Boolean>
+        val musicDetails: List<Boolean>,
+        val musicMood: List<Boolean>
     )
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -40,20 +46,39 @@ class MainActivity : AppCompatActivity() {
         presetSpinner = findViewById(R.id.preset_spinner)
         presetNameInput = findViewById(R.id.preset_name_input)
 
-        // Initialize checkbox lists
+        // Genre checkboxes
         genreChecks.addAll(listOf(
             findViewById(R.id.genre_action), findViewById(R.id.genre_horror), findViewById(R.id.genre_comedy),
             findViewById(R.id.genre_romance), findViewById(R.id.genre_sci_fi), findViewById(R.id.genre_animation)
         ))
+
+        // Visual styles
         styleChecks.addAll(listOf(
             findViewById(R.id.style_epic), findViewById(R.id.style_big_eyed), findViewById(R.id.style_dark),
             findViewById(R.id.style_funny), findViewById(R.id.style_emotional)
         ))
+
+        // Animation style details
+        animStyleChecks.addAll(listOf(
+            findViewById(R.id.anim_wholesome), findViewById(R.id.anim_fairytale),
+            findViewById(R.id.anim_bright_colors), findViewById(R.id.anim_soft_lighting),
+            findViewById(R.id.anim_sweeping_camera), findViewById(R.id.anim_talking_animal),
+            findViewById(R.id.anim_slapstick), findViewById(R.id.anim_emotional_kids)
+        ))
+
+        // Music details
         musicChecks.addAll(listOf(
             findViewById(R.id.music_braams), findViewById(R.id.music_hybrid_orchestral),
             findViewById(R.id.music_risers_hits), findViewById(R.id.music_epic_choir),
             findViewById(R.id.music_pulsing_synth), findViewById(R.id.music_horror_stingers),
             findViewById(R.id.music_quirky_orchestra), findViewById(R.id.music_heartwarming_piano)
+        ))
+
+        // Music mood
+        musicMoodChecks.addAll(listOf(
+            findViewById(R.id.music_dramatic_orchestral), findViewById(R.id.music_suspenseful),
+            findViewById(R.id.music_pensive), findViewById(R.id.music_heartwarming),
+            findViewById(R.id.music_dark_ambient)
         ))
 
         // Setup spinners
@@ -73,10 +98,21 @@ class MainActivity : AppCompatActivity() {
         findViewById<Button>(R.id.generate_button).setOnClickListener { generateEnhancedPrompt() }
         findViewById<Button>(R.id.save_preset_button).setOnClickListener { savePreset() }
         findViewById<Button>(R.id.delete_preset_button).setOnClickListener { deletePreset() }
+        findViewById<Button>(R.id.copy_button).setOnClickListener {
+            val textToCopy = result.text.toString()
+            if (textToCopy.isNotEmpty()) {
+                val clipboard = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+                val clip = ClipData.newPlainText("Trailer Prompt", textToCopy)
+                clipboard.setPrimaryClip(clip)
+                Toast.makeText(this, "Prompt copied to clipboard!", Toast.LENGTH_SHORT).show()
+            } else {
+                Toast.makeText(this, "Nothing to copy yet!", Toast.LENGTH_SHORT).show()
+            }
+        }
 
         presetSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(parent: AdapterView<*>?, view: android.view.View?, position: Int, id: Long) {
-                if (position > 0) {  // Skip "Load Preset" default
+                if (position > 0) {
                     val presetName = presetNames[position]
                     loadPreset(presets[presetName]!!)
                 }
@@ -99,8 +135,10 @@ class MainActivity : AppCompatActivity() {
         val data = PresetData(
             genres = genreChecks.map { it.isChecked },
             styles = styleChecks.map { it.isChecked },
+            animStyles = animStyleChecks.map { it.isChecked },
             musicIntensityIndex = musicIntensitySpinner.selectedItemPosition,
-            musicDetails = musicChecks.map { it.isChecked }
+            musicDetails = musicChecks.map { it.isChecked },
+            musicMood = musicMoodChecks.map { it.isChecked }
         )
 
         presets[name] = data
@@ -126,8 +164,10 @@ class MainActivity : AppCompatActivity() {
     private fun loadPreset(data: PresetData) {
         genreChecks.forEachIndexed { i, cb -> cb.isChecked = data.genres.getOrElse(i) { false } }
         styleChecks.forEachIndexed { i, cb -> cb.isChecked = data.styles.getOrElse(i) { false } }
+        animStyleChecks.forEachIndexed { i, cb -> cb.isChecked = data.animStyles.getOrElse(i) { false } }
         musicIntensitySpinner.setSelection(data.musicIntensityIndex)
         musicChecks.forEachIndexed { i, cb -> cb.isChecked = data.musicDetails.getOrElse(i) { false } }
+        musicMoodChecks.forEachIndexed { i, cb -> cb.isChecked = data.musicMood.getOrElse(i) { false } }
     }
 
     private fun loadPresets() {
@@ -185,17 +225,50 @@ class MainActivity : AppCompatActivity() {
             enhancements.append(" Emotional, heartwarming moments with touching close-ups and slow-motion feels.")
         }
 
-        // Music
+        // Animation style details
+        if (findViewById<CheckBox>(R.id.anim_wholesome).isChecked) {
+            enhancements.append(" Wholesome family-friendly tone suitable for all ages.")
+        }
+        if (findViewById<CheckBox>(R.id.anim_fairytale).isChecked) {
+            enhancements.append(" Set in a magical fairy-tale kingdom with wonder and enchantment.")
+        }
+        if (findViewById<CheckBox>(R.id.anim_bright_colors).isChecked) {
+            enhancements.append(" Bright and saturated colors with a vibrant, colorful world.")
+        }
+        if (findViewById<CheckBox>(R.id.anim_soft_lighting).isChecked) {
+            enhancements.append(" Soft, gentle lighting creating a warm and inviting atmosphere.")
+        }
+        if (findViewById<CheckBox>(R.id.anim_sweeping_camera).isChecked) {
+            enhancements.append(" Sweeping cinematic camera moves and dynamic angles.")
+        }
+        if (findViewById<CheckBox>(R.id.anim_talking_animal).isChecked) {
+            enhancements.append(" Featuring a lovable talking animal sidekick.")
+        }
+        if (findViewById<CheckBox>(R.id.anim_slapstick).isChecked) {
+            enhancements.append(" Gentle slapstick humor and lighthearted comedy.")
+        }
+        if (findViewById<CheckBox>(R.id.anim_emotional_kids).isChecked) {
+            enhancements.append(" Emotional moments that resonate with both kids and parents.")
+        }
+
+        // Music intensity
         val intensity = musicIntensitySpinner.selectedItem.toString()
         musicDetails.append(" Use powerful trailer music with $intensity intensity")
 
+        // Music details
         val selectedMusic = musicChecks.filter { it.isChecked }.map { it.text.toString() }
         if (selectedMusic.isNotEmpty()) {
             musicDetails.append(", featuring ${selectedMusic.joinToString(", ")}")
         }
+
+        // Music mood
+        val selectedMood = musicMoodChecks.filter { it.isChecked }.map { it.text.toString() }
+        if (selectedMood.isNotEmpty()) {
+            musicDetails.append(", with ${selectedMood.joinToString(" and ")}")
+        }
         musicDetails.append(".")
 
-        if (selectedMusic.isEmpty()) {
+        if (selectedMusic.isEmpty() && selectedMood.isEmpty()) {
             musicDetails.append(" featuring epic orchestral swells, deep braams, and dramatic risers.")
         }
 

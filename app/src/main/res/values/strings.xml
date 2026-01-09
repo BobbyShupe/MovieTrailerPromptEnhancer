@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">Prompt style</string>
+    <string name="copy_prompt_to_clipboard">Copy Prompt to Clipboard</string>
 </resources>

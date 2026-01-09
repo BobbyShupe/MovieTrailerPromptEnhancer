@@ -96,6 +96,25 @@
         <CheckBox android:id="@+id/style_funny" android:text="Humorous / Quirky" android:layout_width="match_parent" android:layout_height="wrap_content"/>
         <CheckBox android:id="@+id/style_emotional" android:text="Emotional / Heartwarming" android:layout_width="match_parent" android:layout_height="wrap_content"/>
 
+        <!-- Animation Style Details -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Animation Style Details:"
+            android:textStyle="bold"
+            android:textSize="18sp"
+            android:layout_marginTop="32dp"
+            android:layout_marginBottom="8dp" />
+
+        <CheckBox android:id="@+id/anim_wholesome" android:text="Wholesome Family-Friendly" android:layout_width="match_parent" android:layout_height="wrap_content"/>
+        <CheckBox android:id="@+id/anim_fairytale" android:text="Magical Fairy-Tale Kingdom" android:layout_width="match_parent" android:layout_height="wrap_content"/>
+        <CheckBox android:id="@+id/anim_bright_colors" android:text="Bright &amp; Saturated Colors" android:layout_width="match_parent" android:layout_height="wrap_content"/>
+        <CheckBox android:id="@+id/anim_soft_lighting" android:text="Soft Lighting" android:layout_width="match_parent" android:layout_height="wrap_content"/>
+        <CheckBox android:id="@+id/anim_sweeping_camera" android:text="Sweeping Camera Moves" android:layout_width="match_parent" android:layout_height="wrap_content"/>
+        <CheckBox android:id="@+id/anim_talking_animal" android:text="Talking Animal Sidekick" android:layout_width="match_parent" android:layout_height="wrap_content"/>
+        <CheckBox android:id="@+id/anim_slapstick" android:text="Gentle Slapstick Humor" android:layout_width="match_parent" android:layout_height="wrap_content"/>
+        <CheckBox android:id="@+id/anim_emotional_kids" android:text="Emotional Moments (PG-rated for kids &amp; parents)" android:layout_width="match_parent" android:layout_height="wrap_content"/>
+
         <!-- Music Intensity -->
         <TextView
             android:layout_width="wrap_content"
@@ -121,53 +140,30 @@
             android:layout_marginTop="32dp"
             android:layout_marginBottom="8dp" />
 
-        <CheckBox
-            android:id="@+id/music_braams"
-            android:text="Deep Braams &amp; Sub Booms"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+        <CheckBox android:id="@+id/music_braams" android:text="Deep Braams &amp; Sub Booms" android:layout_width="match_parent" android:layout_height="wrap_content"/>
+        <CheckBox android:id="@+id/music_hybrid_orchestral" android:text="Hybrid Orchestral (strings + synths)" android:layout_width="match_parent" android:layout_height="wrap_content"/>
+        <CheckBox android:id="@+id/music_risers_hits" android:text="Dramatic Risers &amp; Hits" android:layout_width="match_parent" android:layout_height="wrap_content"/>
+        <CheckBox android:id="@+id/music_epic_choir" android:text="Epic Choir &amp; Vocals" android:layout_width="match_parent" android:layout_height="wrap_content"/>
+        <CheckBox android:id="@+id/music_pulsing_synth" android:text="Pulsing Synth Bass" android:layout_width="match_parent" android:layout_height="wrap_content"/>
+        <CheckBox android:id="@+id/music_horror_stingers" android:text="Horror Stingers &amp; Screeches" android:layout_width="match_parent" android:layout_height="wrap_content"/>
+        <CheckBox android:id="@+id/music_quirky_orchestra" android:text="Quirky Playful Orchestra" android:layout_width="match_parent" android:layout_height="wrap_content"/>
+        <CheckBox android:id="@+id/music_heartwarming_piano" android:text="Heartwarming Piano &amp; Strings" android:layout_width="match_parent" android:layout_height="wrap_content"/>
 
-        <CheckBox
-            android:id="@+id/music_hybrid_orchestral"
-            android:text="Hybrid Orchestral (strings + synths)"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+        <!-- Music Mood -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Music Mood:"
+            android:textStyle="bold"
+            android:textSize="18sp"
+            android:layout_marginTop="32dp"
+            android:layout_marginBottom="8dp" />
 
-        <CheckBox
-            android:id="@+id/music_risers_hits"
-            android:text="Dramatic Risers &amp; Hits"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
-
-        <CheckBox
-            android:id="@+id/music_epic_choir"
-            android:text="Epic Choir &amp; Vocals"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
-
-        <CheckBox
-            android:id="@+id/music_pulsing_synth"
-            android:text="Pulsing Synth Bass"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
-
-        <CheckBox
-            android:id="@+id/music_horror_stingers"
-            android:text="Horror Stingers &amp; Screeches"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
-
-        <CheckBox
-            android:id="@+id/music_quirky_orchestra"
-            android:text="Quirky Playful Orchestra"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
-
-        <CheckBox
-            android:id="@+id/music_heartwarming_piano"
-            android:text="Heartwarming Piano &amp; Strings"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+        <CheckBox android:id="@+id/music_dramatic_orchestral" android:text="Dramatic Orchestral" android:layout_width="match_parent" android:layout_height="wrap_content"/>
+        <CheckBox android:id="@+id/music_suspenseful" android:text="Suspenseful / Heighten Unease" android:layout_width="match_parent" android:layout_height="wrap_content"/>
+        <CheckBox android:id="@+id/music_pensive" android:text="Pensive / Thoughtful" android:layout_width="match_parent" android:layout_height="wrap_content"/>
+        <CheckBox android:id="@+id/music_heartwarming" android:text="Heartwarming / Gentle" android:layout_width="match_parent" android:layout_height="wrap_content"/>
+        <CheckBox android:id="@+id/music_dark_ambient" android:text="Dark Ambient Atmospheric (haunting notes)" android:layout_width="match_parent" android:layout_height="wrap_content"/>
 
         <!-- Generate Button -->
         <Button
@@ -208,6 +204,17 @@
                 android:paddingBottom="80dp" />
 
         </ScrollView>
+
+        <!-- Copy to Clipboard Button -->
+        <Button
+            android:id="@+id/copy_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/copy_prompt_to_clipboard"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="16dp"
+            android:backgroundTint="#FF3700B3"
+            android:textColor="#FFFFFF" />
 
         <!-- Extra bottom space -->
         <View
