@@ -18,6 +18,52 @@
             android:textStyle="bold"
             android:layout_marginBottom="16dp" />
 
+        <!-- Preset Controls -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="16dp">
+
+            <Spinner
+                android:id="@+id/preset_spinner"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginEnd="8dp" />
+
+            <Button
+                android:id="@+id/delete_preset_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Delete"
+                android:textSize="14sp" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginBottom="16dp">
+
+            <EditText
+                android:id="@+id/preset_name_input"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:hint="Preset name (e.g., Epic Action Trailer)"
+                android:layout_marginEnd="8dp" />
+
+            <Button
+                android:id="@+id/save_preset_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Save Preset" />
+
+        </LinearLayout>
+
         <EditText
             android:id="@+id/base_prompt"
             android:layout_width="match_parent"
