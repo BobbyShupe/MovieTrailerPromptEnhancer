@@ -1,7 +1,10 @@
 package com.example.promptstyle
 
+import android.content.ClipData
+import android.content.ClipboardManager
 import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import android.widget.*
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
@@ -70,7 +73,6 @@ class MainActivity : AppCompatActivity() {
             findViewById(R.id.music_quirky_orchestra), findViewById(R.id.music_heartwarming_piano)
         ))
 
-        // Music Mood (updated with separate Tense, Ominous, Mysterious, etc.)
         musicMoodChecks.addAll(listOf(
             findViewById(R.id.music_dramatic_orchestral),
             findViewById(R.id.music_suspenseful),
@@ -83,8 +85,26 @@ class MainActivity : AppCompatActivity() {
             findViewById(R.id.music_slow),
             findViewById(R.id.music_melancholy),
             findViewById(R.id.music_somber),
-            findViewById(R.id.music_intriguing),
-            findViewById(R.id.music_percussive)
+            findViewById(R.id.music_anxiety_unease),
+            findViewById(R.id.music_surprise),
+            findViewById(R.id.music_dreaminess),
+            findViewById(R.id.music_nostalgia),
+            findViewById(R.id.music_ambivalence_conflict),
+            findViewById(R.id.music_ambiguous),
+            findViewById(R.id.music_mixed_feelings),
+            findViewById(R.id.music_bittersweet),
+            findViewById(R.id.music_uncertain_unresolved),
+            findViewById(R.id.music_surreal),
+            findViewById(R.id.music_disoriented),
+            findViewById(R.id.music_restless),
+            findViewById(R.id.music_happy),
+            findViewById(R.id.music_energetic),
+            findViewById(R.id.music_uplifting),
+            findViewById(R.id.music_feelgood),
+            findViewById(R.id.music_cheerful),
+            findViewById(R.id.music_optimistic),
+            findViewById(R.id.music_playful),
+            findViewById(R.id.music_bright)
         ))
 
         // Setup spinners
@@ -104,6 +124,30 @@ class MainActivity : AppCompatActivity() {
         findViewById<Button>(R.id.generate_button).setOnClickListener { generateEnhancedPrompt() }
         findViewById<Button>(R.id.save_preset_button).setOnClickListener { savePresetWithConfirmation() }
         findViewById<Button>(R.id.delete_preset_button).setOnClickListener { deletePreset() }
+
+        // Copy to Clipboard Button (improved + debug)
+        findViewById<Button>(R.id.copy_button).setOnClickListener {
+            Log.d("CopyButton", "Copy button clicked!")  // Debug: check Logcat
+
+            val textToCopy = result.text.toString()
+            if (textToCopy.isNotEmpty()) {
+                try {
+                    val clipboard = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+                    val clip = ClipData.newPlainText("Trailer Prompt", textToCopy)
+                    clipboard.setPrimaryClip(clip)
+                    Log.d("CopyButton", "Successfully copied: $textToCopy")
+                    Toast.makeText(this, "Copied to clipboard!", Toast.LENGTH_SHORT).show()
+                } catch (e: Exception) {
+                    Log.e("CopyButton", "Copy failed: ${e.message}", e)
+                    Toast.makeText(this, "Failed to copy: ${e.message}", Toast.LENGTH_LONG).show()
+                }
+            } else {
+                Log.d("CopyButton", "Nothing to copy")
+                Toast.makeText(this, "Nothing to copy!", Toast.LENGTH_SHORT).show()
+            }
+        }
+
+        // Clear Selections Button
         findViewById<Button>(R.id.clear_button).setOnClickListener {
             AlertDialog.Builder(this)
                 .setTitle("Clear All Selections?")
