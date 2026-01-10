@@ -71,7 +71,17 @@
             android:hint="Enter base movie idea or existing prompt (optional)"
             android:minLines="3"
             android:gravity="top"
-            android:layout_marginBottom="24dp" />
+            android:layout_marginBottom="8dp" />
+
+        <!-- Clear Current Selections Button -->
+        <Button
+            android:id="@+id/clear_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Clear Current Selections"
+            android:layout_marginBottom="24dp"
+            android:backgroundTint="#FF6D00"
+            android:textColor="#FFFFFF" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -161,9 +171,17 @@
 
         <CheckBox android:id="@+id/music_dramatic_orchestral" android:text="Dramatic Orchestral" android:layout_width="match_parent" android:layout_height="wrap_content"/>
         <CheckBox android:id="@+id/music_suspenseful" android:text="Suspenseful / Heighten Unease" android:layout_width="match_parent" android:layout_height="wrap_content"/>
+        <CheckBox android:id="@+id/music_tense" android:text="Tense" android:layout_width="match_parent" android:layout_height="wrap_content"/>
+        <CheckBox android:id="@+id/music_ominous" android:text="Ominous" android:layout_width="match_parent" android:layout_height="wrap_content"/>
+        <CheckBox android:id="@+id/music_mysterious" android:text="Mysterious" android:layout_width="match_parent" android:layout_height="wrap_content"/>
         <CheckBox android:id="@+id/music_pensive" android:text="Pensive / Thoughtful" android:layout_width="match_parent" android:layout_height="wrap_content"/>
         <CheckBox android:id="@+id/music_heartwarming" android:text="Heartwarming / Gentle" android:layout_width="match_parent" android:layout_height="wrap_content"/>
         <CheckBox android:id="@+id/music_dark_ambient" android:text="Dark Ambient Atmospheric (haunting notes)" android:layout_width="match_parent" android:layout_height="wrap_content"/>
+        <CheckBox android:id="@+id/music_slow" android:text="Slow" android:layout_width="match_parent" android:layout_height="wrap_content"/>
+        <CheckBox android:id="@+id/music_melancholy" android:text="Melancholy" android:layout_width="match_parent" android:layout_height="wrap_content"/>
+        <CheckBox android:id="@+id/music_somber" android:text="Somber" android:layout_width="match_parent" android:layout_height="wrap_content"/>
+        <CheckBox android:id="@+id/music_intriguing" android:text="Intriguing" android:layout_width="match_parent" android:layout_height="wrap_content"/>
+        <CheckBox android:id="@+id/music_percussive" android:text="Percussive" android:layout_width="match_parent" android:layout_height="wrap_content"/>
 
         <!-- Generate Button -->
         <Button
@@ -181,7 +199,18 @@
             android:text="Generated Prompt:"
             android:textStyle="bold"
             android:textSize="18sp"
+            android:layout_marginTop="24dp"
             android:layout_marginBottom="8dp" />
+
+        <!-- Copy to Clipboard Button -->
+        <Button
+            android:id="@+id/copy_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Copy Prompt to Clipboard"
+            android:layout_marginBottom="16dp"
+            android:backgroundTint="#FF3700B3"
+            android:textColor="#FFFFFF" />
 
         <!-- Result Area -->
         <ScrollView
@@ -204,17 +233,6 @@
                 android:paddingBottom="80dp" />
 
         </ScrollView>
-
-        <!-- Copy to Clipboard Button -->
-        <Button
-            android:id="@+id/copy_button"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/copy_prompt_to_clipboard"
-            android:layout_marginTop="16dp"
-            android:layout_marginBottom="16dp"
-            android:backgroundTint="#FF3700B3"
-            android:textColor="#FFFFFF" />
 
         <!-- Extra bottom space -->
         <View

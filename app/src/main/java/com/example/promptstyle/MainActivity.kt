@@ -3,11 +3,10 @@ package com.example.promptstyle
 import android.content.Context
 import android.os.Bundle
 import android.widget.*
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
-import android.content.ClipData
-import android.content.ClipboardManager
 
 class MainActivity : AppCompatActivity() {
 
@@ -46,19 +45,17 @@ class MainActivity : AppCompatActivity() {
         presetSpinner = findViewById(R.id.preset_spinner)
         presetNameInput = findViewById(R.id.preset_name_input)
 
-        // Genre checkboxes
+        // Initialize checkbox lists
         genreChecks.addAll(listOf(
             findViewById(R.id.genre_action), findViewById(R.id.genre_horror), findViewById(R.id.genre_comedy),
             findViewById(R.id.genre_romance), findViewById(R.id.genre_sci_fi), findViewById(R.id.genre_animation)
         ))
 
-        // Visual styles
         styleChecks.addAll(listOf(
             findViewById(R.id.style_epic), findViewById(R.id.style_big_eyed), findViewById(R.id.style_dark),
             findViewById(R.id.style_funny), findViewById(R.id.style_emotional)
         ))
 
-        // Animation style details
         animStyleChecks.addAll(listOf(
             findViewById(R.id.anim_wholesome), findViewById(R.id.anim_fairytale),
             findViewById(R.id.anim_bright_colors), findViewById(R.id.anim_soft_lighting),
@@ -66,7 +63,6 @@ class MainActivity : AppCompatActivity() {
             findViewById(R.id.anim_slapstick), findViewById(R.id.anim_emotional_kids)
         ))
 
-        // Music details
         musicChecks.addAll(listOf(
             findViewById(R.id.music_braams), findViewById(R.id.music_hybrid_orchestral),
             findViewById(R.id.music_risers_hits), findViewById(R.id.music_epic_choir),
@@ -74,11 +70,21 @@ class MainActivity : AppCompatActivity() {
             findViewById(R.id.music_quirky_orchestra), findViewById(R.id.music_heartwarming_piano)
         ))
 
-        // Music mood
+        // Music Mood (updated with separate Tense, Ominous, Mysterious, etc.)
         musicMoodChecks.addAll(listOf(
-            findViewById(R.id.music_dramatic_orchestral), findViewById(R.id.music_suspenseful),
-            findViewById(R.id.music_pensive), findViewById(R.id.music_heartwarming),
-            findViewById(R.id.music_dark_ambient)
+            findViewById(R.id.music_dramatic_orchestral),
+            findViewById(R.id.music_suspenseful),
+            findViewById(R.id.music_tense),
+            findViewById(R.id.music_ominous),
+            findViewById(R.id.music_mysterious),
+            findViewById(R.id.music_pensive),
+            findViewById(R.id.music_heartwarming),
+            findViewById(R.id.music_dark_ambient),
+            findViewById(R.id.music_slow),
+            findViewById(R.id.music_melancholy),
+            findViewById(R.id.music_somber),
+            findViewById(R.id.music_intriguing),
+            findViewById(R.id.music_percussive)
         ))
 
         // Setup spinners
@@ -96,18 +102,18 @@ class MainActivity : AppCompatActivity() {
 
         // Buttons
         findViewById<Button>(R.id.generate_button).setOnClickListener { generateEnhancedPrompt() }
-        findViewById<Button>(R.id.save_preset_button).setOnClickListener { savePreset() }
+        findViewById<Button>(R.id.save_preset_button).setOnClickListener { savePresetWithConfirmation() }
         findViewById<Button>(R.id.delete_preset_button).setOnClickListener { deletePreset() }
-        findViewById<Button>(R.id.copy_button).setOnClickListener {
-            val textToCopy = result.text.toString()
-            if (textToCopy.isNotEmpty()) {
-                val clipboard = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-                val clip = ClipData.newPlainText("Trailer Prompt", textToCopy)
-                clipboard.setPrimaryClip(clip)
-                Toast.makeText(this, "Prompt copied to clipboard!", Toast.LENGTH_SHORT).show()
-            } else {
-                Toast.makeText(this, "Nothing to copy yet!", Toast.LENGTH_SHORT).show()
-            }
+        findViewById<Button>(R.id.clear_button).setOnClickListener {
+            AlertDialog.Builder(this)
+                .setTitle("Clear All Selections?")
+                .setMessage("This will reset all checkboxes, spinners, and the base prompt. Continue?")
+                .setPositiveButton("Yes, Clear") { _, _ ->
+                    clearAllSelections()
+                    Toast.makeText(this, "All selections cleared!", Toast.LENGTH_SHORT).show()
+                }
+                .setNegativeButton("Cancel", null)
+                .show()
         }
 
         presetSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
@@ -121,17 +127,43 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun savePreset() {
+    private fun clearAllSelections() {
+        genreChecks.forEach { it.isChecked = false }
+        styleChecks.forEach { it.isChecked = false }
+        animStyleChecks.forEach { it.isChecked = false }
+        musicChecks.forEach { it.isChecked = false }
+        musicMoodChecks.forEach { it.isChecked = false }
+
+        musicIntensitySpinner.setSelection(0)
+
+        basePrompt.text.clear()
+        result.text = ""
+
+        presetSpinner.setSelection(0)
+    }
+
+    private fun savePresetWithConfirmation() {
         val name = presetNameInput.text.toString().trim()
         if (name.isEmpty()) {
             Toast.makeText(this, "Enter a preset name", Toast.LENGTH_SHORT).show()
             return
         }
-        if (presets.containsKey(name)) {
-            Toast.makeText(this, "Preset '$name' already exists", Toast.LENGTH_SHORT).show()
-            return
-        }
 
+        if (presets.containsKey(name)) {
+            AlertDialog.Builder(this)
+                .setTitle("Overwrite Preset?")
+                .setMessage("A preset named '$name' already exists. Do you want to overwrite it?")
+                .setPositiveButton("Yes, Overwrite") { _, _ ->
+                    savePreset(name)
+                }
+                .setNegativeButton("Cancel", null)
+                .show()
+        } else {
+            savePreset(name)
+        }
+    }
+
+    private fun savePreset(name: String) {
         val data = PresetData(
             genres = genreChecks.map { it.isChecked },
             styles = styleChecks.map { it.isChecked },
