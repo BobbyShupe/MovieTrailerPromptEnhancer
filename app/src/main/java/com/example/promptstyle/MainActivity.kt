@@ -278,7 +278,21 @@ class MainActivity : AppCompatActivity() {
         val musicDetails = StringBuilder()
         val bigEyedPart = StringBuilder()
 
-        // 1. Visual styles (excluding big-eyed)
+        val cinematicChecked = findViewById<CheckBox>(R.id.style_cinematic).isChecked
+        val animationGenreChecked = findViewById<CheckBox>(R.id.genre_animation).isChecked
+
+        // 1. Forced cinematic/animated movie trailer first line (always first if cinematic is checked)
+        val startPhrase = buildString {
+            if (cinematicChecked) {
+                append("Cinematic 3D animated movie trailer,")
+            } else if (animationGenreChecked) {
+                append("3D animated movie trailer,")
+            } else {
+                append("Movie trailer,")
+            }
+        }
+
+        // 2. Visual styles (excluding cinematic and big-eyed if already used in start phrase)
         if (findViewById<CheckBox>(R.id.style_epic).isChecked) {
             enhancements.append(" Epic cinematic visuals with sweeping camera moves, dramatic lighting, and high-stakes action.")
         }
@@ -291,11 +305,9 @@ class MainActivity : AppCompatActivity() {
         if (findViewById<CheckBox>(R.id.style_emotional).isChecked) {
             enhancements.append(" Emotional, heartwarming moments with touching close-ups and slow-motion feels.")
         }
-        if (findViewById<CheckBox>(R.id.style_cinematic).isChecked) {
-            enhancements.append(" Cinematic style with dramatic lighting, sweeping camera moves, and epic scale.")
-        }
+        // Skip cinematic description here — already in start phrase
 
-        // 2. Animation style details (now included!)
+        // 3. Animation style details (excluding big-eyed)
         if (findViewById<CheckBox>(R.id.anim_wholesome).isChecked) {
             enhancements.append(" Wholesome family-friendly tone suitable for all ages.")
         }
@@ -321,7 +333,7 @@ class MainActivity : AppCompatActivity() {
             enhancements.append(" Emotional moments that resonate with both kids and parents.")
         }
 
-        // 3. Music details + mood
+        // 4. Music details + mood
         val selectedMusic = musicChecks.filter { it.isChecked }.map { it.text.toString() }
         if (selectedMusic.isNotEmpty()) {
             musicDetails.append(" featuring ${selectedMusic.joinToString(", ")}")
@@ -337,32 +349,36 @@ class MainActivity : AppCompatActivity() {
             musicDetails.append(" featuring epic orchestral swells, deep braams, and dramatic risers.")
         }
 
-        // 4. Big-eyed part – AFTER music, only if checked
+        // 5. Big-eyed part – AFTER music, only if checked
         if (findViewById<CheckBox>(R.id.style_big_eyed).isChecked) {
             bigEyedPart.append(", with big-eyed characters.")
         }
 
-        // Final prompt order: enhancements → animation styles → music → big-eyed (if checked) → user's prompt (untouched)
+        // Final prompt construction
         val enhancedPrompt = buildString {
-            // Enhancements + animation styles first
+            // 1. Starting cinematic/animated trailer line (always first when cinematic is checked)
+            append(startPhrase)
+
+            // 2. Enhancements + animation styles
             if (enhancements.isNotEmpty()) {
+                append(" ")
                 append(enhancements.toString().trim())
             }
 
-            // Music
+            // 3. Music
             if (musicDetails.isNotEmpty()) {
-                if (enhancements.isNotEmpty()) append(" ")
+                append(" ")
                 append(musicDetails.toString())
             }
 
-            // Big-eyed characters – AFTER music
+            // 4. Big-eyed characters – AFTER music
             if (bigEyedPart.isNotEmpty()) {
                 append(bigEyedPart.toString())
             }
 
-            // User's prompt – completely untouched
+            // 5. User's prompt – completely untouched
             if (userPrompt.isNotEmpty()) {
-                if (enhancements.isNotEmpty() || musicDetails.isNotEmpty() || bigEyedPart.isNotEmpty()) append(" ")
+                append(" ")
                 append(userPrompt)
             }
         }.trim()
