@@ -15,7 +15,6 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var basePrompt: EditText
     private lateinit var result: TextView
-    private lateinit var musicIntensitySpinner: Spinner
     private lateinit var presetSpinner: Spinner
     private lateinit var presetNameInput: EditText
 
@@ -33,7 +32,6 @@ class MainActivity : AppCompatActivity() {
         val genres: List<Boolean>,
         val styles: List<Boolean>,
         val animStyles: List<Boolean>,
-        val musicIntensityIndex: Int,
         val musicDetails: List<Boolean>,
         val musicMood: List<Boolean>
     )
@@ -44,7 +42,6 @@ class MainActivity : AppCompatActivity() {
 
         basePrompt = findViewById(R.id.base_prompt)
         result = findViewById(R.id.result)
-        musicIntensitySpinner = findViewById(R.id.music_intensity_spinner)
         presetSpinner = findViewById(R.id.preset_spinner)
         presetNameInput = findViewById(R.id.preset_name_input)
 
@@ -68,17 +65,25 @@ class MainActivity : AppCompatActivity() {
         ))
 
         animStyleChecks.addAll(listOf(
-            findViewById(R.id.anim_wholesome), findViewById(R.id.anim_fairytale),
-            findViewById(R.id.anim_bright_colors), findViewById(R.id.anim_soft_lighting),
-            findViewById(R.id.anim_sweeping_camera), findViewById(R.id.anim_talking_animal),
-            findViewById(R.id.anim_slapstick), findViewById(R.id.anim_emotional_kids)
+            findViewById(R.id.anim_wholesome),
+            findViewById(R.id.anim_fairytale),
+            findViewById(R.id.anim_bright_colors),
+            findViewById(R.id.anim_soft_lighting),
+            findViewById(R.id.anim_sweeping_camera),
+            findViewById(R.id.anim_talking_animal),
+            findViewById(R.id.anim_slapstick),
+            findViewById(R.id.anim_emotional_kids)
         ))
 
         musicChecks.addAll(listOf(
-            findViewById(R.id.music_braams), findViewById(R.id.music_hybrid_orchestral),
-            findViewById(R.id.music_risers_hits), findViewById(R.id.music_epic_choir),
-            findViewById(R.id.music_pulsing_synth), findViewById(R.id.music_horror_stingers),
-            findViewById(R.id.music_quirky_orchestra), findViewById(R.id.music_heartwarming_piano)
+            findViewById(R.id.music_braams),
+            findViewById(R.id.music_hybrid_orchestral),
+            findViewById(R.id.music_risers_hits),
+            findViewById(R.id.music_epic_choir),
+            findViewById(R.id.music_pulsing_synth),
+            findViewById(R.id.music_horror_stingers),
+            findViewById(R.id.music_quirky_orchestra),
+            findViewById(R.id.music_heartwarming_piano)
         ))
 
         musicMoodChecks.addAll(listOf(
@@ -116,16 +121,6 @@ class MainActivity : AppCompatActivity() {
             findViewById(R.id.music_upbeat),
             findViewById(R.id.music_panic)
         ))
-
-        // Setup spinners
-        ArrayAdapter.createFromResource(
-            this,
-            R.array.music_intensity_options,
-            android.R.layout.simple_spinner_item
-        ).also { adapter ->
-            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-            musicIntensitySpinner.adapter = adapter
-        }
 
         // Load presets
         loadPresets()
@@ -186,8 +181,6 @@ class MainActivity : AppCompatActivity() {
         musicChecks.forEach { it.isChecked = false }
         musicMoodChecks.forEach { it.isChecked = false }
 
-        musicIntensitySpinner.setSelection(0)
-
         basePrompt.text.clear()
         result.text = ""
 
@@ -220,7 +213,6 @@ class MainActivity : AppCompatActivity() {
             genres = genreChecks.map { it.isChecked },
             styles = styleChecks.map { it.isChecked },
             animStyles = animStyleChecks.map { it.isChecked },
-            musicIntensityIndex = musicIntensitySpinner.selectedItemPosition,
             musicDetails = musicChecks.map { it.isChecked },
             musicMood = musicMoodChecks.map { it.isChecked }
         )
@@ -249,7 +241,6 @@ class MainActivity : AppCompatActivity() {
         genreChecks.forEachIndexed { i, cb -> cb.isChecked = data.genres.getOrElse(i) { false } }
         styleChecks.forEachIndexed { i, cb -> cb.isChecked = data.styles.getOrElse(i) { false } }
         animStyleChecks.forEachIndexed { i, cb -> cb.isChecked = data.animStyles.getOrElse(i) { false } }
-        musicIntensitySpinner.setSelection(data.musicIntensityIndex)
         musicChecks.forEachIndexed { i, cb -> cb.isChecked = data.musicDetails.getOrElse(i) { false } }
         musicMoodChecks.forEachIndexed { i, cb -> cb.isChecked = data.musicMood.getOrElse(i) { false } }
     }
@@ -287,7 +278,7 @@ class MainActivity : AppCompatActivity() {
         val musicDetails = StringBuilder()
         val bigEyedPart = StringBuilder()
 
-        // Visual styles (excluding big-eyed)
+        // 1. Visual styles (excluding big-eyed)
         if (findViewById<CheckBox>(R.id.style_epic).isChecked) {
             enhancements.append(" Epic cinematic visuals with sweeping camera moves, dramatic lighting, and high-stakes action.")
         }
@@ -304,7 +295,7 @@ class MainActivity : AppCompatActivity() {
             enhancements.append(" Cinematic style with dramatic lighting, sweeping camera moves, and epic scale.")
         }
 
-        // Animation style details (excluding big-eyed)
+        // 2. Animation style details (now included!)
         if (findViewById<CheckBox>(R.id.anim_wholesome).isChecked) {
             enhancements.append(" Wholesome family-friendly tone suitable for all ages.")
         }
@@ -330,58 +321,48 @@ class MainActivity : AppCompatActivity() {
             enhancements.append(" Emotional moments that resonate with both kids and parents.")
         }
 
-        // Music intensity + details + mood
-        val intensity = musicIntensitySpinner.selectedItem.toString()
-        musicDetails.append(" Use powerful trailer music with $intensity intensity")
-
+        // 3. Music details + mood
         val selectedMusic = musicChecks.filter { it.isChecked }.map { it.text.toString() }
         if (selectedMusic.isNotEmpty()) {
-            musicDetails.append(", featuring ${selectedMusic.joinToString(", ")}")
+            musicDetails.append(" featuring ${selectedMusic.joinToString(", ")}")
         }
 
         val selectedMood = musicMoodChecks.filter { it.isChecked }.map { it.text.toString() }
         if (selectedMood.isNotEmpty()) {
-            musicDetails.append(", with ${selectedMood.joinToString(" and ")}")
+            if (musicDetails.isNotEmpty()) musicDetails.append(", ")
+            musicDetails.append("with ${selectedMood.joinToString(" and ")}")
         }
-        musicDetails.append(".")
 
         if (selectedMusic.isEmpty() && selectedMood.isEmpty()) {
             musicDetails.append(" featuring epic orchestral swells, deep braams, and dramatic risers.")
         }
 
-        // Big-eyed part – AFTER music, only if checked
+        // 4. Big-eyed part – AFTER music, only if checked
         if (findViewById<CheckBox>(R.id.style_big_eyed).isChecked) {
-            bigEyedPart.append(" with big-eyed characters.")
+            bigEyedPart.append(", with big-eyed characters.")
         }
 
-        // Final prompt construction
+        // Final prompt order: enhancements → animation styles → music → big-eyed (if checked) → user's prompt (untouched)
         val enhancedPrompt = buildString {
-            // 1. Forced starting phrase: always "movie trailer" + optional "Cinematic 3D animated" / "3D animated"
-            val cinematicChecked = findViewById<CheckBox>(R.id.style_cinematic).isChecked
-            val animationGenreChecked = findViewById<CheckBox>(R.id.genre_animation).isChecked
-
-            if (cinematicChecked) {
-                append("Cinematic 3D animated movie trailer,")
-            } else if (animationGenreChecked) {
-                append("3D Animated movie trailer,")
-            } else {
-                append("Movie trailer,")
+            // Enhancements + animation styles first
+            if (enhancements.isNotEmpty()) {
+                append(enhancements.toString().trim())
             }
 
-            // 2. Music (after the trailer line)
+            // Music
             if (musicDetails.isNotEmpty()) {
-                append(" ")
-                append(musicDetails.toString().trim())
+                if (enhancements.isNotEmpty()) append(" ")
+                append(musicDetails.toString())
             }
 
-            // 3. Big-eyed characters – AFTER music
+            // Big-eyed characters – AFTER music
             if (bigEyedPart.isNotEmpty()) {
                 append(bigEyedPart.toString())
             }
 
-            // 4. User's prompt – completely untouched
+            // User's prompt – completely untouched
             if (userPrompt.isNotEmpty()) {
-                append(" ")
+                if (enhancements.isNotEmpty() || musicDetails.isNotEmpty() || bigEyedPart.isNotEmpty()) append(" ")
                 append(userPrompt)
             }
         }.trim()

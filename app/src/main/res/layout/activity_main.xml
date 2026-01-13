@@ -126,21 +126,6 @@
         <CheckBox android:id="@+id/anim_slapstick" android:text="Gentle Slapstick Humor" android:layout_width="match_parent" android:layout_height="wrap_content"/>
         <CheckBox android:id="@+id/anim_emotional_kids" android:text="Emotional Moments (PG-rated for kids &amp; parents)" android:layout_width="match_parent" android:layout_height="wrap_content"/>
 
-        <!-- Music Intensity -->
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Trailer Music Intensity:"
-            android:textStyle="bold"
-            android:textSize="18sp"
-            android:layout_marginTop="32dp"
-            android:layout_marginBottom="8dp" />
-
-        <Spinner
-            android:id="@+id/music_intensity_spinner"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
-
         <!-- Music Details -->
         <TextView
             android:layout_width="wrap_content"
