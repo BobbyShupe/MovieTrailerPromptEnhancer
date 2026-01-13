@@ -101,7 +101,7 @@
 
         <!-- Visual Styles -->
         <CheckBox android:id="@+id/style_epic" android:text="Epic / Dramatic (In a world... style)" android:layout_width="match_parent" android:layout_height="wrap_content"/>
-        <CheckBox android:id="@+id/style_big_eyed" android:text="3D animated characters, vibrant colors, in an animated style with big-eyed characters" android:layout_width="match_parent" android:layout_height="wrap_content"/>
+        <CheckBox android:id="@+id/style_big_eyed" android:text="3D animated characters with big-eyed characters" android:layout_width="match_parent" android:layout_height="wrap_content"/>
         <CheckBox android:id="@+id/style_dark" android:text="Dark and Gritty" android:layout_width="match_parent" android:layout_height="wrap_content"/>
         <CheckBox android:id="@+id/style_funny" android:text="Humorous / Quirky" android:layout_width="match_parent" android:layout_height="wrap_content"/>
         <CheckBox android:id="@+id/style_emotional" android:text="Emotional / Heartwarming" android:layout_width="match_parent" android:layout_height="wrap_content"/>
@@ -122,7 +122,7 @@
         <CheckBox android:id="@+id/anim_bright_colors" android:text="Bright &amp; Saturated Colors" android:layout_width="match_parent" android:layout_height="wrap_content"/>
         <CheckBox android:id="@+id/anim_soft_lighting" android:text="Soft Lighting" android:layout_width="match_parent" android:layout_height="wrap_content"/>
         <CheckBox android:id="@+id/anim_sweeping_camera" android:text="Sweeping Camera Moves" android:layout_width="match_parent" android:layout_height="wrap_content"/>
-        <CheckBox android:id="@+id/anim_talking_animal" android:text="Talking Animal Sidekick" android:layout_width="match_parent" android:layout_height="wrap_content"/>
+        <CheckBox android:id="@+id/anim_talking_animal" android:text="Talking Animal" android:layout_width="match_parent" android:layout_height="wrap_content"/>
         <CheckBox android:id="@+id/anim_slapstick" android:text="Gentle Slapstick Humor" android:layout_width="match_parent" android:layout_height="wrap_content"/>
         <CheckBox android:id="@+id/anim_emotional_kids" android:text="Emotional Moments (PG-rated for kids &amp; parents)" android:layout_width="match_parent" android:layout_height="wrap_content"/>
 

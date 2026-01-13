@@ -280,19 +280,20 @@ class MainActivity : AppCompatActivity() {
 
         val cinematicChecked = findViewById<CheckBox>(R.id.style_cinematic).isChecked
         val animationGenreChecked = findViewById<CheckBox>(R.id.genre_animation).isChecked
+        val brightColorsChecked = findViewById<CheckBox>(R.id.anim_bright_colors).isChecked
 
-        // 1. Forced cinematic/animated movie trailer first line (always first if cinematic is checked)
+        // 1. Forced starting phrase – always first
         val startPhrase = buildString {
             if (cinematicChecked) {
-                append("Cinematic 3D animated movie trailer,")
-            } else if (animationGenreChecked) {
-                append("3D animated movie trailer,")
-            } else {
-                append("Movie trailer,")
+                append("Cinematic ")
             }
+            if (animationGenreChecked) {
+                append("3D animated ")
+            }
+            append("movie trailer,")
         }
 
-        // 2. Visual styles (excluding cinematic and big-eyed if already used in start phrase)
+        // 2. Visual styles (excluding big-eyed)
         if (findViewById<CheckBox>(R.id.style_epic).isChecked) {
             enhancements.append(" Epic cinematic visuals with sweeping camera moves, dramatic lighting, and high-stakes action.")
         }
@@ -314,17 +315,17 @@ class MainActivity : AppCompatActivity() {
         if (findViewById<CheckBox>(R.id.anim_fairytale).isChecked) {
             enhancements.append(" Set in a magical fairy-tale kingdom with wonder and enchantment.")
         }
-        if (findViewById<CheckBox>(R.id.anim_bright_colors).isChecked) {
-            enhancements.append(" Bright and saturated colors with a vibrant, colorful world.")
+        if (brightColorsChecked) {
+            enhancements.append(" Bright and saturated colors.")
         }
         if (findViewById<CheckBox>(R.id.anim_soft_lighting).isChecked) {
-            enhancements.append(" Soft, gentle lighting creating a warm and inviting atmosphere.")
+            enhancements.append(" Soft lighting.")
         }
         if (findViewById<CheckBox>(R.id.anim_sweeping_camera).isChecked) {
             enhancements.append(" Sweeping cinematic camera moves and dynamic angles.")
         }
         if (findViewById<CheckBox>(R.id.anim_talking_animal).isChecked) {
-            enhancements.append(" Featuring a lovable talking animal sidekick.")
+            enhancements.append(" Featuring a talking animal.")
         }
         if (findViewById<CheckBox>(R.id.anim_slapstick).isChecked) {
             enhancements.append(" Gentle slapstick humor and lighthearted comedy.")
@@ -356,7 +357,7 @@ class MainActivity : AppCompatActivity() {
 
         // Final prompt construction
         val enhancedPrompt = buildString {
-            // 1. Starting cinematic/animated trailer line (always first when cinematic is checked)
+            // 1. Starting line – always first
             append(startPhrase)
 
             // 2. Enhancements + animation styles
