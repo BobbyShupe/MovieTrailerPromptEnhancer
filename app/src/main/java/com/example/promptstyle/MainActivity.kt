@@ -50,13 +50,21 @@ class MainActivity : AppCompatActivity() {
 
         // Initialize checkbox lists
         genreChecks.addAll(listOf(
-            findViewById(R.id.genre_action), findViewById(R.id.genre_horror), findViewById(R.id.genre_comedy),
-            findViewById(R.id.genre_romance), findViewById(R.id.genre_sci_fi), findViewById(R.id.genre_animation)
+            findViewById(R.id.genre_action),
+            findViewById(R.id.genre_horror),
+            findViewById(R.id.genre_comedy),
+            findViewById(R.id.genre_romance),
+            findViewById(R.id.genre_sci_fi),
+            findViewById(R.id.genre_animation)
         ))
 
         styleChecks.addAll(listOf(
-            findViewById(R.id.style_epic), findViewById(R.id.style_big_eyed), findViewById(R.id.style_dark),
-            findViewById(R.id.style_funny), findViewById(R.id.style_emotional)
+            findViewById(R.id.style_epic),
+            findViewById(R.id.style_big_eyed),
+            findViewById(R.id.style_dark),
+            findViewById(R.id.style_funny),
+            findViewById(R.id.style_emotional),
+            findViewById(R.id.style_cinematic)
         ))
 
         animStyleChecks.addAll(listOf(
@@ -104,7 +112,9 @@ class MainActivity : AppCompatActivity() {
             findViewById(R.id.music_cheerful),
             findViewById(R.id.music_optimistic),
             findViewById(R.id.music_playful),
-            findViewById(R.id.music_bright)
+            findViewById(R.id.music_bright),
+            findViewById(R.id.music_upbeat),
+            findViewById(R.id.music_panic)
         ))
 
         // Setup spinners
@@ -125,9 +135,8 @@ class MainActivity : AppCompatActivity() {
         findViewById<Button>(R.id.save_preset_button).setOnClickListener { savePresetWithConfirmation() }
         findViewById<Button>(R.id.delete_preset_button).setOnClickListener { deletePreset() }
 
-        // Copy to Clipboard Button (improved + debug)
         findViewById<Button>(R.id.copy_button).setOnClickListener {
-            Log.d("CopyButton", "Copy button clicked!")  // Debug: check Logcat
+            Log.d("CopyButton", "Copy button clicked!")
 
             val textToCopy = result.text.toString()
             if (textToCopy.isNotEmpty()) {
@@ -147,7 +156,6 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-        // Clear Selections Button
         findViewById<Button>(R.id.clear_button).setOnClickListener {
             AlertDialog.Builder(this)
                 .setTitle("Clear All Selections?")
@@ -273,23 +281,15 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun generateEnhancedPrompt() {
-        var base = basePrompt.text.toString().trim()
-        if (base.isEmpty()) base = "A thrilling movie"
-
-        val selectedGenres = genreChecks.filter { it.isChecked }.map { it.text.toString() }
-        if (selectedGenres.isNotEmpty()) {
-            base += " in the " + selectedGenres.joinToString(", ") + " genre"
-        }
+        val userPrompt = basePrompt.text.toString().trim()
 
         val enhancements = StringBuilder()
         val musicDetails = StringBuilder()
+        val bigEyedPart = StringBuilder()
 
-        // Visual styles
+        // Visual styles (excluding big-eyed)
         if (findViewById<CheckBox>(R.id.style_epic).isChecked) {
             enhancements.append(" Epic cinematic visuals with sweeping camera moves, dramatic lighting, and high-stakes action.")
-        }
-        if (findViewById<CheckBox>(R.id.style_big_eyed).isChecked) {
-            enhancements.append(" Adorable 3D animated characters with big expressive eyes, vibrant colors, in a cute animated style.")
         }
         if (findViewById<CheckBox>(R.id.style_dark).isChecked) {
             enhancements.append(" Dark, gritty atmosphere with shadowy visuals and intense mood.")
@@ -300,8 +300,11 @@ class MainActivity : AppCompatActivity() {
         if (findViewById<CheckBox>(R.id.style_emotional).isChecked) {
             enhancements.append(" Emotional, heartwarming moments with touching close-ups and slow-motion feels.")
         }
+        if (findViewById<CheckBox>(R.id.style_cinematic).isChecked) {
+            enhancements.append(" Cinematic style with dramatic lighting, sweeping camera moves, and epic scale.")
+        }
 
-        // Animation style details
+        // Animation style details (excluding big-eyed)
         if (findViewById<CheckBox>(R.id.anim_wholesome).isChecked) {
             enhancements.append(" Wholesome family-friendly tone suitable for all ages.")
         }
@@ -327,17 +330,15 @@ class MainActivity : AppCompatActivity() {
             enhancements.append(" Emotional moments that resonate with both kids and parents.")
         }
 
-        // Music intensity
+        // Music intensity + details + mood
         val intensity = musicIntensitySpinner.selectedItem.toString()
         musicDetails.append(" Use powerful trailer music with $intensity intensity")
 
-        // Music details
         val selectedMusic = musicChecks.filter { it.isChecked }.map { it.text.toString() }
         if (selectedMusic.isNotEmpty()) {
             musicDetails.append(", featuring ${selectedMusic.joinToString(", ")}")
         }
 
-        // Music mood
         val selectedMood = musicMoodChecks.filter { it.isChecked }.map { it.text.toString() }
         if (selectedMood.isNotEmpty()) {
             musicDetails.append(", with ${selectedMood.joinToString(" and ")}")
@@ -348,12 +349,42 @@ class MainActivity : AppCompatActivity() {
             musicDetails.append(" featuring epic orchestral swells, deep braams, and dramatic risers.")
         }
 
-        val enhancedPrompt = """
-            Generate a compelling movie trailer voiceover script and visual description for: $base.
-            Make it exciting and cinematic.$enhancements
-            $musicDetails
-            Structure with building tension, quick cuts, deep impactful narration, and a powerful final tagline.
-        """.trimIndent()
+        // Big-eyed part – AFTER music, only if checked
+        if (findViewById<CheckBox>(R.id.style_big_eyed).isChecked) {
+            bigEyedPart.append(" with big-eyed characters.")
+        }
+
+        // Final prompt construction
+        val enhancedPrompt = buildString {
+            // 1. Forced starting phrase: always "movie trailer" + optional "Cinematic 3D animated" / "3D animated"
+            val cinematicChecked = findViewById<CheckBox>(R.id.style_cinematic).isChecked
+            val animationGenreChecked = findViewById<CheckBox>(R.id.genre_animation).isChecked
+
+            if (cinematicChecked) {
+                append("Cinematic 3D animated movie trailer,")
+            } else if (animationGenreChecked) {
+                append("3D Animated movie trailer,")
+            } else {
+                append("Movie trailer,")
+            }
+
+            // 2. Music (after the trailer line)
+            if (musicDetails.isNotEmpty()) {
+                append(" ")
+                append(musicDetails.toString().trim())
+            }
+
+            // 3. Big-eyed characters – AFTER music
+            if (bigEyedPart.isNotEmpty()) {
+                append(bigEyedPart.toString())
+            }
+
+            // 4. User's prompt – completely untouched
+            if (userPrompt.isNotEmpty()) {
+                append(" ")
+                append(userPrompt)
+            }
+        }.trim()
 
         result.text = enhancedPrompt
     }

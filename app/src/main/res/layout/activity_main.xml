@@ -101,10 +101,11 @@
 
         <!-- Visual Styles -->
         <CheckBox android:id="@+id/style_epic" android:text="Epic / Dramatic (In a world... style)" android:layout_width="match_parent" android:layout_height="wrap_content"/>
-        <CheckBox android:id="@+id/style_big_eyed" android:text="3D Big-Eyed Expressive Characters (cute animated style)" android:layout_width="match_parent" android:layout_height="wrap_content"/>
+        <CheckBox android:id="@+id/style_big_eyed" android:text="3D animated characters, vibrant colors, in an animated style with big-eyed characters" android:layout_width="match_parent" android:layout_height="wrap_content"/>
         <CheckBox android:id="@+id/style_dark" android:text="Dark and Gritty" android:layout_width="match_parent" android:layout_height="wrap_content"/>
         <CheckBox android:id="@+id/style_funny" android:text="Humorous / Quirky" android:layout_width="match_parent" android:layout_height="wrap_content"/>
         <CheckBox android:id="@+id/style_emotional" android:text="Emotional / Heartwarming" android:layout_width="match_parent" android:layout_height="wrap_content"/>
+        <CheckBox android:id="@+id/style_cinematic" android:text="Cinematic" android:layout_width="match_parent" android:layout_height="wrap_content"/>
 
         <!-- Animation Style Details -->
         <TextView
@@ -200,6 +201,8 @@
         <CheckBox android:id="@+id/music_optimistic" android:text="Optimistic" android:layout_width="match_parent" android:layout_height="wrap_content"/>
         <CheckBox android:id="@+id/music_playful" android:text="Playful" android:layout_width="match_parent" android:layout_height="wrap_content"/>
         <CheckBox android:id="@+id/music_bright" android:text="Bright" android:layout_width="match_parent" android:layout_height="wrap_content"/>
+        <CheckBox android:id="@+id/music_upbeat" android:text="Upbeat" android:layout_width="match_parent" android:layout_height="wrap_content"/>
+        <CheckBox android:id="@+id/music_panic" android:text="Panic" android:layout_width="match_parent" android:layout_height="wrap_content"/>
 
         <!-- Generate Button -->
         <Button
