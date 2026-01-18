@@ -123,6 +123,7 @@
         <CheckBox android:id="@+id/anim_soft_lighting" android:text="Soft Lighting" android:layout_width="match_parent" android:layout_height="wrap_content"/>
         <CheckBox android:id="@+id/anim_sweeping_camera" android:text="Sweeping Camera Moves" android:layout_width="match_parent" android:layout_height="wrap_content"/>
         <CheckBox android:id="@+id/anim_talking_animal" android:text="Talking Animal" android:layout_width="match_parent" android:layout_height="wrap_content"/>
+        <CheckBox android:id="@+id/anim_talking_animal_noraccoon" android:text="Talking animal sidekick (not raccoon)" android:layout_width="match_parent" android:layout_height="wrap_content"/>
         <CheckBox android:id="@+id/anim_slapstick" android:text="Gentle Slapstick Humor" android:layout_width="match_parent" android:layout_height="wrap_content"/>
         <CheckBox android:id="@+id/anim_emotional_kids" android:text="Emotional Moments (PG-rated for kids &amp; parents)" android:layout_width="match_parent" android:layout_height="wrap_content"/>
 
@@ -145,7 +146,7 @@
         <CheckBox android:id="@+id/music_quirky_orchestra" android:text="Quirky Playful Orchestra" android:layout_width="match_parent" android:layout_height="wrap_content"/>
         <CheckBox android:id="@+id/music_heartwarming_piano" android:text="Heartwarming Piano &amp; Strings" android:layout_width="match_parent" android:layout_height="wrap_content"/>
 
-        <!-- Music Mood -->
+        <!-- Music Mood – only 5 main categories -->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -155,29 +156,74 @@
             android:layout_marginTop="32dp"
             android:layout_marginBottom="8dp" />
 
+        <!-- Category 1: Dramatic -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Dramatic"
+            android:textStyle="italic"
+            android:textSize="16sp"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="4dp" />
         <CheckBox android:id="@+id/music_dramatic_orchestral" android:text="Dramatic Orchestral" android:layout_width="match_parent" android:layout_height="wrap_content"/>
-        <CheckBox android:id="@+id/music_suspenseful" android:text="Suspenseful / Heighten Unease" android:layout_width="match_parent" android:layout_height="wrap_content"/>
+        <CheckBox android:id="@+id/music_ambivalence_conflict" android:text="Ambivalence / Inner Conflict" android:layout_width="match_parent" android:layout_height="wrap_content"/>
+        <CheckBox android:id="@+id/music_bittersweet" android:text="Bittersweet" android:layout_width="match_parent" android:layout_height="wrap_content"/>
+
+        <!-- Category 2: Tense -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Tense"
+            android:textStyle="italic"
+            android:textSize="16sp"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="4dp" />
         <CheckBox android:id="@+id/music_tense" android:text="Tense" android:layout_width="match_parent" android:layout_height="wrap_content"/>
+        <CheckBox android:id="@+id/music_suspenseful" android:text="Suspenseful" android:layout_width="match_parent" android:layout_height="wrap_content"/>
+        <CheckBox android:id="@+id/music_anxiety_unease" android:text="Anxiety / Unease" android:layout_width="match_parent" android:layout_height="wrap_content"/>
         <CheckBox android:id="@+id/music_ominous" android:text="Ominous" android:layout_width="match_parent" android:layout_height="wrap_content"/>
-        <CheckBox android:id="@+id/music_mysterious" android:text="Mysterious" android:layout_width="match_parent" android:layout_height="wrap_content"/>
-        <CheckBox android:id="@+id/music_pensive" android:text="Pensive / Thoughtful" android:layout_width="match_parent" android:layout_height="wrap_content"/>
-        <CheckBox android:id="@+id/music_heartwarming" android:text="Heartwarming / Gentle" android:layout_width="match_parent" android:layout_height="wrap_content"/>
-        <CheckBox android:id="@+id/music_dark_ambient" android:text="Dark Ambient Atmospheric (haunting notes)" android:layout_width="match_parent" android:layout_height="wrap_content"/>
-        <CheckBox android:id="@+id/music_slow" android:text="Slow" android:layout_width="match_parent" android:layout_height="wrap_content"/>
+
+        <!-- Category 3: Somber -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Somber"
+            android:textStyle="italic"
+            android:textSize="16sp"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="4dp" />
         <CheckBox android:id="@+id/music_melancholy" android:text="Melancholy" android:layout_width="match_parent" android:layout_height="wrap_content"/>
         <CheckBox android:id="@+id/music_somber" android:text="Somber" android:layout_width="match_parent" android:layout_height="wrap_content"/>
-        <CheckBox android:id="@+id/music_anxiety_unease" android:text="Anxiety / Unease" android:layout_width="match_parent" android:layout_height="wrap_content"/>
-        <CheckBox android:id="@+id/music_surprise" android:text="Surprise" android:layout_width="match_parent" android:layout_height="wrap_content"/>
-        <CheckBox android:id="@+id/music_dreaminess" android:text="Dreaminess" android:layout_width="match_parent" android:layout_height="wrap_content"/>
-        <CheckBox android:id="@+id/music_nostalgia" android:text="Nostalgia" android:layout_width="match_parent" android:layout_height="wrap_content"/>
-        <CheckBox android:id="@+id/music_ambivalence_conflict" android:text="Ambivalence / Inner Conflict" android:layout_width="match_parent" android:layout_height="wrap_content"/>
-        <CheckBox android:id="@+id/music_ambiguous" android:text="Ambiguous" android:layout_width="match_parent" android:layout_height="wrap_content"/>
-        <CheckBox android:id="@+id/music_mixed_feelings" android:text="Mixed Feelings" android:layout_width="match_parent" android:layout_height="wrap_content"/>
-        <CheckBox android:id="@+id/music_bittersweet" android:text="Bittersweet" android:layout_width="match_parent" android:layout_height="wrap_content"/>
-        <CheckBox android:id="@+id/music_uncertain_unresolved" android:text="Uncertain / Unresolved" android:layout_width="match_parent" android:layout_height="wrap_content"/>
-        <CheckBox android:id="@+id/music_surreal" android:text="Surreal" android:layout_width="match_parent" android:layout_height="wrap_content"/>
-        <CheckBox android:id="@+id/music_disoriented" android:text="Disoriented" android:layout_width="match_parent" android:layout_height="wrap_content"/>
-        <CheckBox android:id="@+id/music_restless" android:text="Restless" android:layout_width="match_parent" android:layout_height="wrap_content"/>
+        <CheckBox android:id="@+id/music_desolate" android:text="Desolate" android:layout_width="match_parent" android:layout_height="wrap_content"/>
+        <CheckBox android:id="@+id/music_dark_ambient" android:text="Dark Ambient" android:layout_width="match_parent" android:layout_height="wrap_content"/>
+
+        <!-- Category 4: Apathetic -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Apathetic"
+            android:textStyle="italic"
+            android:textSize="16sp"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="4dp" />
+        <CheckBox android:id="@+id/music_apathetic" android:text="Apathetic" android:layout_width="match_parent" android:layout_height="wrap_content"/>
+        <CheckBox android:id="@+id/music_indifferent" android:text="Indifferent" android:layout_width="match_parent" android:layout_height="wrap_content"/>
+        <CheckBox android:id="@+id/music_unenthused" android:text="Unenthused" android:layout_width="match_parent" android:layout_height="wrap_content"/>
+        <CheckBox android:id="@+id/music_meh" android:text="Meh" android:layout_width="match_parent" android:layout_height="wrap_content"/>
+        <CheckBox android:id="@+id/music_blah" android:text="Blah" android:layout_width="match_parent" android:layout_height="wrap_content"/>
+        <CheckBox android:id="@+id/music_tired" android:text="Tired" android:layout_width="match_parent" android:layout_height="wrap_content"/>
+        <CheckBox android:id="@+id/music_weary" android:text="Weary" android:layout_width="match_parent" android:layout_height="wrap_content"/>
+        <CheckBox android:id="@+id/music_draggy" android:text="Draggy" android:layout_width="match_parent" android:layout_height="wrap_content"/>
+
+        <!-- Category 5: Uplifting -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Uplifting"
+            android:textStyle="italic"
+            android:textSize="16sp"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="4dp" />
         <CheckBox android:id="@+id/music_happy" android:text="Happy" android:layout_width="match_parent" android:layout_height="wrap_content"/>
         <CheckBox android:id="@+id/music_energetic" android:text="Energetic" android:layout_width="match_parent" android:layout_height="wrap_content"/>
         <CheckBox android:id="@+id/music_uplifting" android:text="Uplifting" android:layout_width="match_parent" android:layout_height="wrap_content"/>
@@ -187,7 +233,6 @@
         <CheckBox android:id="@+id/music_playful" android:text="Playful" android:layout_width="match_parent" android:layout_height="wrap_content"/>
         <CheckBox android:id="@+id/music_bright" android:text="Bright" android:layout_width="match_parent" android:layout_height="wrap_content"/>
         <CheckBox android:id="@+id/music_upbeat" android:text="Upbeat" android:layout_width="match_parent" android:layout_height="wrap_content"/>
-        <CheckBox android:id="@+id/music_panic" android:text="Panic" android:layout_width="match_parent" android:layout_height="wrap_content"/>
 
         <!-- Generate Button -->
         <Button

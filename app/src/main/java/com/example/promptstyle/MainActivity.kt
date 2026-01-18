@@ -71,6 +71,7 @@ class MainActivity : AppCompatActivity() {
             findViewById(R.id.anim_soft_lighting),
             findViewById(R.id.anim_sweeping_camera),
             findViewById(R.id.anim_talking_animal),
+            findViewById(R.id.anim_talking_animal_noraccoon),
             findViewById(R.id.anim_slapstick),
             findViewById(R.id.anim_emotional_kids)
         ))
@@ -87,29 +88,34 @@ class MainActivity : AppCompatActivity() {
         ))
 
         musicMoodChecks.addAll(listOf(
+            // Dramatic
             findViewById(R.id.music_dramatic_orchestral),
-            findViewById(R.id.music_suspenseful),
+            findViewById(R.id.music_ambivalence_conflict),
+            findViewById(R.id.music_bittersweet),
+
+            // Tense
             findViewById(R.id.music_tense),
+            findViewById(R.id.music_suspenseful),
+            findViewById(R.id.music_anxiety_unease),
             findViewById(R.id.music_ominous),
-            findViewById(R.id.music_mysterious),
-            findViewById(R.id.music_pensive),
-            findViewById(R.id.music_heartwarming),
-            findViewById(R.id.music_dark_ambient),
-            findViewById(R.id.music_slow),
+
+            // Somber
             findViewById(R.id.music_melancholy),
             findViewById(R.id.music_somber),
-            findViewById(R.id.music_anxiety_unease),
-            findViewById(R.id.music_surprise),
-            findViewById(R.id.music_dreaminess),
-            findViewById(R.id.music_nostalgia),
-            findViewById(R.id.music_ambivalence_conflict),
-            findViewById(R.id.music_ambiguous),
-            findViewById(R.id.music_mixed_feelings),
-            findViewById(R.id.music_bittersweet),
-            findViewById(R.id.music_uncertain_unresolved),
-            findViewById(R.id.music_surreal),
-            findViewById(R.id.music_disoriented),
-            findViewById(R.id.music_restless),
+            findViewById(R.id.music_desolate),
+            findViewById(R.id.music_dark_ambient),
+
+            // Apathetic
+            findViewById(R.id.music_apathetic),
+            findViewById(R.id.music_indifferent),
+            findViewById(R.id.music_unenthused),
+            findViewById(R.id.music_meh),
+            findViewById(R.id.music_blah),
+            findViewById(R.id.music_tired),
+            findViewById(R.id.music_weary),
+            findViewById(R.id.music_draggy),
+
+            // Uplifting
             findViewById(R.id.music_happy),
             findViewById(R.id.music_energetic),
             findViewById(R.id.music_uplifting),
@@ -118,8 +124,7 @@ class MainActivity : AppCompatActivity() {
             findViewById(R.id.music_optimistic),
             findViewById(R.id.music_playful),
             findViewById(R.id.music_bright),
-            findViewById(R.id.music_upbeat),
-            findViewById(R.id.music_panic)
+            findViewById(R.id.music_upbeat)
         ))
 
         // Load presets
@@ -131,22 +136,18 @@ class MainActivity : AppCompatActivity() {
         findViewById<Button>(R.id.delete_preset_button).setOnClickListener { deletePreset() }
 
         findViewById<Button>(R.id.copy_button).setOnClickListener {
-            Log.d("CopyButton", "Copy button clicked!")
-
             val textToCopy = result.text.toString()
             if (textToCopy.isNotEmpty()) {
                 try {
                     val clipboard = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
                     val clip = ClipData.newPlainText("Trailer Prompt", textToCopy)
                     clipboard.setPrimaryClip(clip)
-                    Log.d("CopyButton", "Successfully copied: $textToCopy")
-                    Toast.makeText(this, "Copied to clipboard!", Toast.LENGTH_SHORT).show()
+                    // Let system show "Copied to clipboard" at bottom
                 } catch (e: Exception) {
                     Log.e("CopyButton", "Copy failed: ${e.message}", e)
                     Toast.makeText(this, "Failed to copy: ${e.message}", Toast.LENGTH_LONG).show()
                 }
             } else {
-                Log.d("CopyButton", "Nothing to copy")
                 Toast.makeText(this, "Nothing to copy!", Toast.LENGTH_SHORT).show()
             }
         }
@@ -185,6 +186,7 @@ class MainActivity : AppCompatActivity() {
         result.text = ""
 
         presetSpinner.setSelection(0)
+        Toast.makeText(this, "Reset to prompt position: ${presetSpinner.selectedItemPosition}", Toast.LENGTH_SHORT).show()
     }
 
     private fun savePresetWithConfirmation() {
@@ -306,7 +308,6 @@ class MainActivity : AppCompatActivity() {
         if (findViewById<CheckBox>(R.id.style_emotional).isChecked) {
             enhancements.append(" Emotional, heartwarming moments with touching close-ups and slow-motion feels.")
         }
-        // Skip cinematic description here — already in start phrase
 
         // 3. Animation style details (excluding big-eyed)
         if (findViewById<CheckBox>(R.id.anim_wholesome).isChecked) {
@@ -326,6 +327,9 @@ class MainActivity : AppCompatActivity() {
         }
         if (findViewById<CheckBox>(R.id.anim_talking_animal).isChecked) {
             enhancements.append(" Featuring a talking animal.")
+        }
+        if (findViewById<CheckBox>(R.id.anim_talking_animal_noraccoon).isChecked) {
+            enhancements.append(" Featuring a talking animal sidekick (not raccoon).")
         }
         if (findViewById<CheckBox>(R.id.anim_slapstick).isChecked) {
             enhancements.append(" Gentle slapstick humor and lighthearted comedy.")
@@ -350,9 +354,11 @@ class MainActivity : AppCompatActivity() {
             musicDetails.append(" featuring epic orchestral swells, deep braams, and dramatic risers.")
         }
 
+        val musicText = musicDetails.toString().trim()
+
         // 5. Big-eyed part – AFTER music, only if checked
         if (findViewById<CheckBox>(R.id.style_big_eyed).isChecked) {
-            bigEyedPart.append(", with big-eyed characters.")
+            bigEyedPart.append(" music, with big-eyed characters.")
         }
 
         // Final prompt construction
@@ -366,10 +372,10 @@ class MainActivity : AppCompatActivity() {
                 append(enhancements.toString().trim())
             }
 
-            // 3. Music
-            if (musicDetails.isNotEmpty()) {
+            // 3. Music (if any)
+            if (musicText.isNotEmpty()) {
                 append(" ")
-                append(musicDetails.toString())
+                append(musicText)
             }
 
             // 4. Big-eyed characters – AFTER music
