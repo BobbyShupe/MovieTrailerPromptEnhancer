@@ -54,7 +54,8 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:hint="Preset name (e.g., Epic Action Trailer)"
-                android:layout_marginEnd="8dp" />
+                android:layout_marginEnd="8dp"
+                android:cursorVisible="true" />
 
             <Button
                 android:id="@+id/save_preset_button"
@@ -71,7 +72,8 @@
             android:hint="Enter base movie idea or existing prompt (optional)"
             android:minLines="3"
             android:gravity="top"
-            android:layout_marginBottom="8dp" />
+            android:layout_marginBottom="8dp"
+            android:cursorVisible="true" />
 
         <!-- Clear Current Selections Button -->
         <Button
@@ -313,7 +315,5 @@
             android:layout_width="match_parent"
             android:layout_height="120dp" />
 
-        <!-- Missing moods restored as individual checkboxes -->
     </LinearLayout>
-
 </ScrollView>

@@ -8,6 +8,8 @@ import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
+import android.view.View
+import android.view.inputmethod.InputMethodManager
 import android.widget.*
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
@@ -64,6 +66,19 @@ class MainActivity : AppCompatActivity() {
         presetSpinner = findViewById(R.id.preset_spinner)
         presetNameInput = findViewById(R.id.preset_name_input)
 
+        // Prevent soft keyboard from appearing and add defensive focus handling
+        listOf(basePrompt, presetNameInput).forEach { editText ->
+            editText.showSoftInputOnFocus = false
+            editText.isCursorVisible = true
+
+            // Extra protection: hide keyboard whenever these fields gain focus
+            editText.setOnFocusChangeListener { v, hasFocus ->
+                if (hasFocus) {
+                    hideSoftKeyboard(v)
+                }
+            }
+        }
+
         // Initialize checkbox lists
         genreChecks.addAll(listOf(
             findViewById(R.id.genre_action),
@@ -106,7 +121,6 @@ class MainActivity : AppCompatActivity() {
             findViewById(R.id.music_heartwarming_piano)
         ))
 
-        // All moods — including Apathetic — are now fully included
         musicMoodChecks.addAll(listOf(
             // Dramatic
             findViewById(R.id.music_dramatic_orchestral),
@@ -127,7 +141,7 @@ class MainActivity : AppCompatActivity() {
             findViewById(R.id.music_dark_ambient),
             findViewById(R.id.music_slow),
 
-            // Apathetic (now fully contributing to output)
+            // Apathetic
             findViewById(R.id.music_apathetic),
             findViewById(R.id.music_indifferent),
             findViewById(R.id.music_unenthused),
@@ -153,7 +167,7 @@ class MainActivity : AppCompatActivity() {
             findViewById(R.id.music_bright),
             findViewById(R.id.music_upbeat),
 
-            // Strange / Other (all remaining moods)
+            // Strange / Other
             findViewById(R.id.music_mysterious),
             findViewById(R.id.music_pensive),
             findViewById(R.id.music_heartwarming),
@@ -200,7 +214,6 @@ class MainActivity : AppCompatActivity() {
                 .setMessage("This will reset all checkboxes, spinners, and the base prompt. Continue?")
                 .setPositiveButton("Yes, Clear") { _, _ ->
                     clearAllSelections()
-                    // No toast here
                 }
                 .setNegativeButton("Cancel", null)
                 .show()
@@ -234,6 +247,11 @@ class MainActivity : AppCompatActivity() {
     override fun onPause() {
         super.onPause()
         saveUiState()
+    }
+
+    private fun hideSoftKeyboard(view: View) {
+        val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
+        imm?.hideSoftInputFromWindow(view.windowToken, 0)
     }
 
     private fun saveUiState() {
@@ -286,8 +304,6 @@ class MainActivity : AppCompatActivity() {
         musicChecks.forEach { it.isChecked = false }
         musicMoodChecks.forEach { it.isChecked = false }
 
-        //basePrompt.text.clear()
-        //presetNameInput.text.clear()
         result.text = ""
 
         presetSpinner.setSelection(0)
@@ -326,7 +342,6 @@ class MainActivity : AppCompatActivity() {
         presets[name] = data
         savePresetsToStorage()
         updatePresetSpinner()
-        // presetNameInput.text.clear()   // optional: clear after save
         Toast.makeText(this, "Preset '$name' saved", Toast.LENGTH_SHORT).show()
     }
 
