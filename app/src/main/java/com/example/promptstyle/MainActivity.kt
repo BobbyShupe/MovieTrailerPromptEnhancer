@@ -3,6 +3,7 @@ package com.example.promptstyle
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.util.Log
 import android.widget.*
@@ -28,6 +29,8 @@ class MainActivity : AppCompatActivity() {
     private val presets = mutableMapOf<String, PresetData>()
     private val presetNames = mutableListOf<String>()
 
+    private lateinit var prefs: SharedPreferences
+
     data class PresetData(
         val genres: List<Boolean>,
         val styles: List<Boolean>,
@@ -36,9 +39,22 @@ class MainActivity : AppCompatActivity() {
         val musicMood: List<Boolean>
     )
 
+    // Data class to save/restore UI state
+    data class UiState(
+        val basePromptText: String = "",
+        val selectedPresetIndex: Int = 0,
+        val genreStates: List<Boolean> = emptyList(),
+        val styleStates: List<Boolean> = emptyList(),
+        val animStyleStates: List<Boolean> = emptyList(),
+        val musicDetailStates: List<Boolean> = emptyList(),
+        val musicMoodStates: List<Boolean> = emptyList()
+    )
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        prefs = getSharedPreferences("PromptStylePrefs", Context.MODE_PRIVATE)
 
         basePrompt = findViewById(R.id.base_prompt)
         result = findViewById(R.id.result)
@@ -88,39 +104,29 @@ class MainActivity : AppCompatActivity() {
         ))
 
         musicMoodChecks.addAll(listOf(
-            // Dramatic
             findViewById(R.id.music_dramatic_orchestral),
-            findViewById(R.id.music_ambivalence_conflict),
-            findViewById(R.id.music_bittersweet),
-
-            // Tense
-            findViewById(R.id.music_tense),
             findViewById(R.id.music_suspenseful),
-            findViewById(R.id.music_anxiety_unease),
+            findViewById(R.id.music_tense),
             findViewById(R.id.music_ominous),
-
-            // Somber
+            findViewById(R.id.music_mysterious),
+            findViewById(R.id.music_pensive),
+            findViewById(R.id.music_heartwarming),
+            findViewById(R.id.music_dark_ambient),
+            findViewById(R.id.music_slow),
             findViewById(R.id.music_melancholy),
             findViewById(R.id.music_somber),
-            findViewById(R.id.music_desolate),
-            findViewById(R.id.music_dark_ambient),
-
-            // Apathetic
-            findViewById(R.id.music_apathetic),
-            findViewById(R.id.music_indifferent),
-            findViewById(R.id.music_unenthused),
-            findViewById(R.id.music_meh),
-            findViewById(R.id.music_blah),
-            findViewById(R.id.music_tired),
-            findViewById(R.id.music_weary),
-            findViewById(R.id.music_draggy),
-            findViewById(R.id.music_listless),
-            findViewById(R.id.music_lowkey),
-            findViewById(R.id.music_unlively),
-            findViewById(R.id.music_unmoved),
-            findViewById(R.id.music_spiritless),
-
-            // Uplifting
+            findViewById(R.id.music_anxiety_unease),
+            findViewById(R.id.music_surprise),
+            findViewById(R.id.music_dreaminess),
+            findViewById(R.id.music_nostalgia),
+            findViewById(R.id.music_ambivalence_conflict),
+            findViewById(R.id.music_ambiguous),
+            findViewById(R.id.music_mixed_feelings),
+            findViewById(R.id.music_bittersweet),
+            findViewById(R.id.music_uncertain_unresolved),
+            findViewById(R.id.music_surreal),
+            findViewById(R.id.music_disoriented),
+            findViewById(R.id.music_restless),
             findViewById(R.id.music_happy),
             findViewById(R.id.music_energetic),
             findViewById(R.id.music_uplifting),
@@ -129,26 +135,14 @@ class MainActivity : AppCompatActivity() {
             findViewById(R.id.music_optimistic),
             findViewById(R.id.music_playful),
             findViewById(R.id.music_bright),
-            findViewById(R.id.music_upbeat),
-
-            // Strange / Other – all the remaining "different" moods you listed
-            findViewById(R.id.music_mysterious),
-            findViewById(R.id.music_pensive),
-            findViewById(R.id.music_heartwarming),
-            findViewById(R.id.music_slow),
-            findViewById(R.id.music_surprise),
-            findViewById(R.id.music_dreaminess),
-            findViewById(R.id.music_nostalgia),
-            findViewById(R.id.music_ambiguous),
-            findViewById(R.id.music_mixed_feelings),
-            findViewById(R.id.music_uncertain_unresolved),
-            findViewById(R.id.music_surreal),
-            findViewById(R.id.music_disoriented),
-            findViewById(R.id.music_restless)
+            findViewById(R.id.music_upbeat)
         ))
 
-        // Load presets
+        // Load saved presets
         loadPresets()
+
+        // Restore UI state (checkboxes, text, spinner selection)
+        restoreUiState()
 
         // Buttons
         findViewById<Button>(R.id.generate_button).setOnClickListener { generateEnhancedPrompt() }
@@ -162,7 +156,7 @@ class MainActivity : AppCompatActivity() {
                     val clipboard = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
                     val clip = ClipData.newPlainText("Trailer Prompt", textToCopy)
                     clipboard.setPrimaryClip(clip)
-                    // Let system show "Copied to clipboard" at bottom
+                    // System toast will show "Copied to clipboard"
                 } catch (e: Exception) {
                     Log.e("CopyButton", "Copy failed: ${e.message}", e)
                     Toast.makeText(this, "Failed to copy: ${e.message}", Toast.LENGTH_LONG).show()
@@ -189,9 +183,73 @@ class MainActivity : AppCompatActivity() {
                 if (position > 0) {
                     val presetName = presetNames[position]
                     loadPreset(presets[presetName]!!)
+                    saveUiState()  // save after loading preset
                 }
             }
             override fun onNothingSelected(parent: AdapterView<*>?) {}
+        }
+
+        // Save state automatically after every checkbox change
+        val checkListener = CompoundButton.OnCheckedChangeListener { _, _ -> saveUiState() }
+        (genreChecks + styleChecks + animStyleChecks + musicChecks + musicMoodChecks).forEach {
+            it.setOnCheckedChangeListener(checkListener)
+        }
+
+        // Save state when base prompt text changes
+        basePrompt.addTextChangedListener(object : android.text.TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+            override fun afterTextChanged(s: android.text.Editable?) { saveUiState() }
+        })
+    }
+
+    override fun onPause() {
+        super.onPause()
+        saveUiState()  // Save when leaving the activity
+    }
+
+    private fun saveUiState() {
+        val state = UiState(
+            basePromptText = basePrompt.text.toString(),
+            selectedPresetIndex = presetSpinner.selectedItemPosition.coerceIn(0, presetSpinner.adapter?.count ?: 1),
+            genreStates = genreChecks.map { it.isChecked },
+            styleStates = styleChecks.map { it.isChecked },
+            animStyleStates = animStyleChecks.map { it.isChecked },
+            musicDetailStates = musicChecks.map { it.isChecked },
+            musicMoodStates = musicMoodChecks.map { it.isChecked }
+        )
+
+        prefs.edit()
+            .putString("ui_state", gson.toJson(state))
+            .apply()
+    }
+
+    private fun restoreUiState() {
+        val json = prefs.getString("ui_state", null) ?: return
+
+        try {
+            val state = gson.fromJson<UiState>(json, object : TypeToken<UiState>() {}.type)
+
+            // Restore text
+            basePrompt.setText(state.basePromptText)
+
+            // Restore spinner selection (safe check)
+            if (state.selectedPresetIndex in 0 until (presetSpinner.adapter?.count ?: 0)) {
+                presetSpinner.setSelection(state.selectedPresetIndex)
+            }
+
+            // Restore checkboxes (safe indexing)
+            genreChecks.forEachIndexed { i, cb -> cb.isChecked = state.genreStates.getOrElse(i) { false } }
+            styleChecks.forEachIndexed { i, cb -> cb.isChecked = state.styleStates.getOrElse(i) { false } }
+            animStyleChecks.forEachIndexed { i, cb -> cb.isChecked = state.animStyleStates.getOrElse(i) { false } }
+            musicChecks.forEachIndexed { i, cb -> cb.isChecked = state.musicDetailStates.getOrElse(i) { false } }
+            musicMoodChecks.forEachIndexed { i, cb -> cb.isChecked = state.musicMoodStates.getOrElse(i) { false } }
+
+            // Regenerate preview with restored values
+            generateEnhancedPrompt()
+
+        } catch (e: Exception) {
+            Log.e("RestoreUI", "Failed to restore state", e)
         }
     }
 
@@ -207,7 +265,14 @@ class MainActivity : AppCompatActivity() {
 
         presetSpinner.setSelection(0)
         Toast.makeText(this, "Reset to prompt position: ${presetSpinner.selectedItemPosition}", Toast.LENGTH_SHORT).show()
+
+        // Also clear saved UI state so next launch starts fresh
+        prefs.edit().remove("ui_state").apply()
     }
+
+    // ──────────────────────────────────────────────────────────────
+    //  Rest of your existing methods (unchanged)
+    // ──────────────────────────────────────────────────────────────
 
     private fun savePresetWithConfirmation() {
         val name = presetNameInput.text.toString().trim()
