@@ -114,6 +114,11 @@ class MainActivity : AppCompatActivity() {
             findViewById(R.id.music_tired),
             findViewById(R.id.music_weary),
             findViewById(R.id.music_draggy),
+            findViewById(R.id.music_listless),
+            findViewById(R.id.music_lowkey),
+            findViewById(R.id.music_unlively),
+            findViewById(R.id.music_unmoved),
+            findViewById(R.id.music_spiritless),
 
             // Uplifting
             findViewById(R.id.music_happy),
@@ -124,7 +129,22 @@ class MainActivity : AppCompatActivity() {
             findViewById(R.id.music_optimistic),
             findViewById(R.id.music_playful),
             findViewById(R.id.music_bright),
-            findViewById(R.id.music_upbeat)
+            findViewById(R.id.music_upbeat),
+
+            // Strange / Other – all the remaining "different" moods you listed
+            findViewById(R.id.music_mysterious),
+            findViewById(R.id.music_pensive),
+            findViewById(R.id.music_heartwarming),
+            findViewById(R.id.music_slow),
+            findViewById(R.id.music_surprise),
+            findViewById(R.id.music_dreaminess),
+            findViewById(R.id.music_nostalgia),
+            findViewById(R.id.music_ambiguous),
+            findViewById(R.id.music_mixed_feelings),
+            findViewById(R.id.music_uncertain_unresolved),
+            findViewById(R.id.music_surreal),
+            findViewById(R.id.music_disoriented),
+            findViewById(R.id.music_restless)
         ))
 
         // Load presets
