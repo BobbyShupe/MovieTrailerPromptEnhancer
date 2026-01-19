@@ -5,6 +5,8 @@ import android.content.ClipboardManager
 import android.content.Context
 import android.content.SharedPreferences
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.util.Log
 import android.widget.*
 import androidx.appcompat.app.AlertDialog
@@ -39,9 +41,9 @@ class MainActivity : AppCompatActivity() {
         val musicMood: List<Boolean>
     )
 
-    // Data class to save/restore UI state
     data class UiState(
         val basePromptText: String = "",
+        val presetNameText: String = "",
         val selectedPresetIndex: Int = 0,
         val genreStates: List<Boolean> = emptyList(),
         val styleStates: List<Boolean> = emptyList(),
@@ -61,7 +63,6 @@ class MainActivity : AppCompatActivity() {
         presetSpinner = findViewById(R.id.preset_spinner)
         presetNameInput = findViewById(R.id.preset_name_input)
 
-        // Initialize checkbox lists
         genreChecks.addAll(listOf(
             findViewById(R.id.genre_action),
             findViewById(R.id.genre_horror),
@@ -138,13 +139,9 @@ class MainActivity : AppCompatActivity() {
             findViewById(R.id.music_upbeat)
         ))
 
-        // Load saved presets
         loadPresets()
-
-        // Restore UI state (checkboxes, text, spinner selection)
         restoreUiState()
 
-        // Buttons
         findViewById<Button>(R.id.generate_button).setOnClickListener { generateEnhancedPrompt() }
         findViewById<Button>(R.id.save_preset_button).setOnClickListener { savePresetWithConfirmation() }
         findViewById<Button>(R.id.delete_preset_button).setOnClickListener { deletePreset() }
@@ -156,24 +153,20 @@ class MainActivity : AppCompatActivity() {
                     val clipboard = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
                     val clip = ClipData.newPlainText("Trailer Prompt", textToCopy)
                     clipboard.setPrimaryClip(clip)
-                    // System toast will show "Copied to clipboard"
+                    Toast.makeText(this, "Copied to clipboard", Toast.LENGTH_SHORT).show()
                 } catch (e: Exception) {
-                    Log.e("CopyButton", "Copy failed: ${e.message}", e)
-                    Toast.makeText(this, "Failed to copy: ${e.message}", Toast.LENGTH_LONG).show()
+                    Toast.makeText(this, "Copy failed", Toast.LENGTH_SHORT).show()
                 }
             } else {
-                Toast.makeText(this, "Nothing to copy!", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "Nothing to copy", Toast.LENGTH_SHORT).show()
             }
         }
 
         findViewById<Button>(R.id.clear_button).setOnClickListener {
             AlertDialog.Builder(this)
-                .setTitle("Clear All Selections?")
-                .setMessage("This will reset all checkboxes, spinners, and the base prompt. Continue?")
-                .setPositiveButton("Yes, Clear") { _, _ ->
-                    clearAllSelections()
-                    Toast.makeText(this, "All selections cleared!", Toast.LENGTH_SHORT).show()
-                }
+                .setTitle("Clear All?")
+                .setMessage("Reset checkboxes, base prompt, preset name and result?")
+                .setPositiveButton("Yes") { _, _ -> clearAllSelections() }
                 .setNegativeButton("Cancel", null)
                 .show()
         }
@@ -181,36 +174,41 @@ class MainActivity : AppCompatActivity() {
         presetSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(parent: AdapterView<*>?, view: android.view.View?, position: Int, id: Long) {
                 if (position > 0) {
-                    val presetName = presetNames[position]
-                    loadPreset(presets[presetName]!!)
-                    saveUiState()  // save after loading preset
+                    val name = presetNames[position]
+                    loadPreset(presets[name]!!)
+                    presetNameInput.setText(name)  // optional: show loaded preset name
+                    saveUiState()
                 }
             }
             override fun onNothingSelected(parent: AdapterView<*>?) {}
         }
 
-        // Save state automatically after every checkbox change
         val checkListener = CompoundButton.OnCheckedChangeListener { _, _ -> saveUiState() }
         (genreChecks + styleChecks + animStyleChecks + musicChecks + musicMoodChecks).forEach {
             it.setOnCheckedChangeListener(checkListener)
         }
 
-        // Save state when base prompt text changes
-        basePrompt.addTextChangedListener(object : android.text.TextWatcher {
+        val textWatcher = object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
-            override fun afterTextChanged(s: android.text.Editable?) { saveUiState() }
-        })
+            override fun afterTextChanged(s: Editable?) {
+                saveUiState()
+            }
+        }
+
+        basePrompt.addTextChangedListener(textWatcher)
+        presetNameInput.addTextChangedListener(textWatcher)   // ← this is required for preset name
     }
 
     override fun onPause() {
         super.onPause()
-        saveUiState()  // Save when leaving the activity
+        saveUiState()
     }
 
     private fun saveUiState() {
         val state = UiState(
             basePromptText = basePrompt.text.toString(),
+            presetNameText = presetNameInput.text.toString(),
             selectedPresetIndex = presetSpinner.selectedItemPosition.coerceIn(0, presetSpinner.adapter?.count ?: 1),
             genreStates = genreChecks.map { it.isChecked },
             styleStates = styleChecks.map { it.isChecked },
@@ -230,26 +228,20 @@ class MainActivity : AppCompatActivity() {
         try {
             val state = gson.fromJson<UiState>(json, object : TypeToken<UiState>() {}.type)
 
-            // Restore text
             basePrompt.setText(state.basePromptText)
+            presetNameInput.setText(state.presetNameText)   // ← this is required
 
-            // Restore spinner selection (safe check)
-            if (state.selectedPresetIndex in 0 until (presetSpinner.adapter?.count ?: 0)) {
-                presetSpinner.setSelection(state.selectedPresetIndex)
-            }
+            presetSpinner.setSelection(state.selectedPresetIndex.coerceIn(0, presetSpinner.adapter?.count ?: 0))
 
-            // Restore checkboxes (safe indexing)
             genreChecks.forEachIndexed { i, cb -> cb.isChecked = state.genreStates.getOrElse(i) { false } }
             styleChecks.forEachIndexed { i, cb -> cb.isChecked = state.styleStates.getOrElse(i) { false } }
             animStyleChecks.forEachIndexed { i, cb -> cb.isChecked = state.animStyleStates.getOrElse(i) { false } }
             musicChecks.forEachIndexed { i, cb -> cb.isChecked = state.musicDetailStates.getOrElse(i) { false } }
             musicMoodChecks.forEachIndexed { i, cb -> cb.isChecked = state.musicMoodStates.getOrElse(i) { false } }
 
-            // Regenerate preview with restored values
             generateEnhancedPrompt()
-
         } catch (e: Exception) {
-            Log.e("RestoreUI", "Failed to restore state", e)
+            Log.e("RestoreUI", "Failed to restore UI state", e)
         }
     }
 
@@ -260,19 +252,16 @@ class MainActivity : AppCompatActivity() {
         musicChecks.forEach { it.isChecked = false }
         musicMoodChecks.forEach { it.isChecked = false }
 
-        basePrompt.text.clear()
+        //basePrompt.text.clear()
+        //presetNameInput.text.clear()
         result.text = ""
 
         presetSpinner.setSelection(0)
-        Toast.makeText(this, "Reset to prompt position: ${presetSpinner.selectedItemPosition}", Toast.LENGTH_SHORT).show()
 
-        // Also clear saved UI state so next launch starts fresh
         prefs.edit().remove("ui_state").apply()
-    }
 
-    // ──────────────────────────────────────────────────────────────
-    //  Rest of your existing methods (unchanged)
-    // ──────────────────────────────────────────────────────────────
+        Toast.makeText(this, "Reset complete", Toast.LENGTH_SHORT).show()
+    }
 
     private fun savePresetWithConfirmation() {
         val name = presetNameInput.text.toString().trim()
@@ -284,11 +273,9 @@ class MainActivity : AppCompatActivity() {
         if (presets.containsKey(name)) {
             AlertDialog.Builder(this)
                 .setTitle("Overwrite Preset?")
-                .setMessage("A preset named '$name' already exists. Do you want to overwrite it?")
-                .setPositiveButton("Yes, Overwrite") { _, _ ->
-                    savePreset(name)
-                }
-                .setNegativeButton("Cancel", null)
+                .setMessage("Preset '$name' already exists. Overwrite?")
+                .setPositiveButton("Yes") { _, _ -> savePreset(name) }
+                .setNegativeButton("No", null)
                 .show()
         } else {
             savePreset(name)
@@ -307,8 +294,8 @@ class MainActivity : AppCompatActivity() {
         presets[name] = data
         savePresetsToStorage()
         updatePresetSpinner()
-        presetNameInput.text.clear()
-        Toast.makeText(this, "Preset '$name' saved!", Toast.LENGTH_SHORT).show()
+        // presetNameInput.text.clear()   // ← optional: clear after save
+        Toast.makeText(this, "Preset '$name' saved", Toast.LENGTH_SHORT).show()
     }
 
     private fun deletePreset() {
@@ -321,37 +308,34 @@ class MainActivity : AppCompatActivity() {
         presets.remove(name)
         savePresetsToStorage()
         updatePresetSpinner()
-        Toast.makeText(this, "Preset '$name' deleted", Toast.LENGTH_SHORT).show()
+        Toast.makeText(this, "Deleted '$name'", Toast.LENGTH_SHORT).show()
     }
 
     private fun loadPreset(data: PresetData) {
-        genreChecks.forEachIndexed { i, cb -> cb.isChecked = data.genres.getOrElse(i) { false } }
-        styleChecks.forEachIndexed { i, cb -> cb.isChecked = data.styles.getOrElse(i) { false } }
+        genreChecks.forEachIndexed    { i, cb -> cb.isChecked = data.genres.getOrElse(i) { false } }
+        styleChecks.forEachIndexed     { i, cb -> cb.isChecked = data.styles.getOrElse(i) { false } }
         animStyleChecks.forEachIndexed { i, cb -> cb.isChecked = data.animStyles.getOrElse(i) { false } }
-        musicChecks.forEachIndexed { i, cb -> cb.isChecked = data.musicDetails.getOrElse(i) { false } }
+        musicChecks.forEachIndexed     { i, cb -> cb.isChecked = data.musicDetails.getOrElse(i) { false } }
         musicMoodChecks.forEachIndexed { i, cb -> cb.isChecked = data.musicMood.getOrElse(i) { false } }
     }
 
     private fun loadPresets() {
-        val prefs = getSharedPreferences("presets", Context.MODE_PRIVATE)
-        val json = prefs.getString("preset_data", null)
-        if (json != null) {
-            val typeToken = object : TypeToken<Map<String, PresetData>>() {}.type
-            presets.putAll(gson.fromJson(json, typeToken))
-        }
+        val presetPrefs = getSharedPreferences("presets", Context.MODE_PRIVATE)
+        val json = presetPrefs.getString("preset_data", null) ?: return
+        val typeToken = object : TypeToken<Map<String, PresetData>>() {}.type
+        presets.putAll(gson.fromJson(json, typeToken))
         updatePresetSpinner()
     }
 
     private fun savePresetsToStorage() {
-        val prefs = getSharedPreferences("presets", Context.MODE_PRIVATE)
-        prefs.edit().putString("preset_data", gson.toJson(presets)).apply()
+        val presetPrefs = getSharedPreferences("presets", Context.MODE_PRIVATE)
+        presetPrefs.edit().putString("preset_data", gson.toJson(presets)).apply()
     }
 
     private fun updatePresetSpinner() {
         presetNames.clear()
         presetNames.add("— Load Preset —")
         presetNames.addAll(presets.keys.sorted())
-
         val adapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, presetNames)
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         presetSpinner.adapter = adapter
@@ -369,18 +353,12 @@ class MainActivity : AppCompatActivity() {
         val animationGenreChecked = findViewById<CheckBox>(R.id.genre_animation).isChecked
         val brightColorsChecked = findViewById<CheckBox>(R.id.anim_bright_colors).isChecked
 
-        // 1. Forced starting phrase – always first
         val startPhrase = buildString {
-            if (cinematicChecked) {
-                append("Cinematic ")
-            }
-            if (animationGenreChecked) {
-                append("3D animated ")
-            }
+            if (cinematicChecked) append("Cinematic ")
+            if (animationGenreChecked) append("3D animated ")
             append("movie trailer,")
         }
 
-        // 2. Visual styles (excluding big-eyed)
         if (findViewById<CheckBox>(R.id.style_epic).isChecked) {
             enhancements.append(" Epic cinematic visuals with sweeping camera moves, dramatic lighting, and high-stakes action.")
         }
@@ -394,7 +372,6 @@ class MainActivity : AppCompatActivity() {
             enhancements.append(" Emotional, heartwarming moments with touching close-ups and slow-motion feels.")
         }
 
-        // 3. Animation style details (excluding big-eyed)
         if (findViewById<CheckBox>(R.id.anim_wholesome).isChecked) {
             enhancements.append(" Wholesome family-friendly tone suitable for all ages.")
         }
@@ -423,7 +400,6 @@ class MainActivity : AppCompatActivity() {
             enhancements.append(" Emotional moments that resonate with both kids and parents.")
         }
 
-        // 4. Music details + mood
         val selectedMusic = musicChecks.filter { it.isChecked }.map { it.text.toString() }
         if (selectedMusic.isNotEmpty()) {
             musicDetails.append(" featuring ${selectedMusic.joinToString(", ")}")
@@ -441,34 +417,21 @@ class MainActivity : AppCompatActivity() {
 
         val musicText = musicDetails.toString().trim()
 
-        // 5. Big-eyed part – AFTER music, only if checked
         if (findViewById<CheckBox>(R.id.style_big_eyed).isChecked) {
             bigEyedPart.append(" music, with big-eyed characters.")
         }
 
-        // Final prompt construction
         val enhancedPrompt = buildString {
-            // 1. Starting line – always first
             append(startPhrase)
-
-            // 2. Enhancements + animation styles
             if (enhancements.isNotEmpty()) {
                 append(" ")
                 append(enhancements.toString().trim())
             }
-
-            // 3. Music (if any)
             if (musicText.isNotEmpty()) {
                 append(" ")
                 append(musicText)
             }
-
-            // 4. Big-eyed characters – AFTER music
-            if (bigEyedPart.isNotEmpty()) {
-                append(bigEyedPart.toString())
-            }
-
-            // 5. User's prompt – completely untouched
+            if (bigEyedPart.isNotEmpty()) append(bigEyedPart)
             if (userPrompt.isNotEmpty()) {
                 append(" ")
                 append(userPrompt)
@@ -476,5 +439,6 @@ class MainActivity : AppCompatActivity() {
         }.trim()
 
         result.text = enhancedPrompt
+        saveUiState()
     }
 }

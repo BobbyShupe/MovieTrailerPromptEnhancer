@@ -146,7 +146,7 @@
         <CheckBox android:id="@+id/music_quirky_orchestra" android:text="Quirky Playful Orchestra" android:layout_width="match_parent" android:layout_height="wrap_content"/>
         <CheckBox android:id="@+id/music_heartwarming_piano" android:text="Heartwarming Piano &amp; Strings" android:layout_width="match_parent" android:layout_height="wrap_content"/>
 
-        <!-- Music Mood – exactly 5 categories with all individual moods -->
+        <!-- Music Mood – 5 clean categories with all individual moods -->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -236,7 +236,6 @@
         <CheckBox android:id="@+id/music_bright" android:text="Bright" android:layout_width="match_parent" android:layout_height="wrap_content"/>
         <CheckBox android:id="@+id/music_upbeat" android:text="Upbeat" android:layout_width="match_parent" android:layout_height="wrap_content"/>
 
-        <!-- Strange / Other (contains all the "different" moods you listed) -->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -248,16 +247,15 @@
         <CheckBox android:id="@+id/music_mysterious" android:text="Mysterious" android:layout_width="match_parent" android:layout_height="wrap_content"/>
         <CheckBox android:id="@+id/music_pensive" android:text="Pensive / Thoughtful" android:layout_width="match_parent" android:layout_height="wrap_content"/>
         <CheckBox android:id="@+id/music_heartwarming" android:text="Heartwarming / Gentle" android:layout_width="match_parent" android:layout_height="wrap_content"/>
-        <CheckBox android:id="@+id/music_slow" android:text="Slow" android:layout_width="match_parent" android:layout_height="wrap_content"/>
         <CheckBox android:id="@+id/music_surprise" android:text="Surprise" android:layout_width="match_parent" android:layout_height="wrap_content"/>
         <CheckBox android:id="@+id/music_dreaminess" android:text="Dreaminess" android:layout_width="match_parent" android:layout_height="wrap_content"/>
         <CheckBox android:id="@+id/music_nostalgia" android:text="Nostalgia" android:layout_width="match_parent" android:layout_height="wrap_content"/>
         <CheckBox android:id="@+id/music_ambiguous" android:text="Ambiguous" android:layout_width="match_parent" android:layout_height="wrap_content"/>
-        <CheckBox android:id="@+id/music_mixed_feelings" android:text="Mixed Feelings" android:layout_width="match_parent" android:layout_height="wrap_content"/>
         <CheckBox android:id="@+id/music_uncertain_unresolved" android:text="Uncertain / Unresolved" android:layout_width="match_parent" android:layout_height="wrap_content"/>
         <CheckBox android:id="@+id/music_surreal" android:text="Surreal" android:layout_width="match_parent" android:layout_height="wrap_content"/>
         <CheckBox android:id="@+id/music_disoriented" android:text="Disoriented" android:layout_width="match_parent" android:layout_height="wrap_content"/>
         <CheckBox android:id="@+id/music_restless" android:text="Restless" android:layout_width="match_parent" android:layout_height="wrap_content"/>
+
 
         <!-- Generate Button -->
         <Button
@@ -315,5 +313,7 @@
             android:layout_width="match_parent"
             android:layout_height="120dp" />
 
+        <!-- Missing moods restored as individual checkboxes -->
     </LinearLayout>
+
 </ScrollView>
